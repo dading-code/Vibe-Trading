@@ -163,37 +163,6 @@ def _fix_tool_pairs(messages: list) -> None:
         messages.insert(pos, stub)
 
 
-def _attach_tool_call_thought_signatures(message: dict[str, Any], tool_calls: list) -> None:
-    """Attach Gemini thought signatures to replayed assistant tool calls."""
-    outbound_tool_calls = message.get("tool_calls")
-    if not isinstance(outbound_tool_calls, list):
-        return
-
-    signatures_by_id = {
-        tc.id: tc.thought_signature
-        for tc in tool_calls
-        if getattr(tc, "thought_signature", None)
-    }
-    for index, outbound_tool_call in enumerate(outbound_tool_calls):
-        if not isinstance(outbound_tool_call, dict):
-            continue
-        signature = signatures_by_id.get(outbound_tool_call.get("id"))
-        if not signature and index < len(tool_calls):
-            signature = getattr(tool_calls[index], "thought_signature", None)
-        if not signature:
-            continue
-
-        extra_content = outbound_tool_call.get("extra_content")
-        if not isinstance(extra_content, dict):
-            extra_content = {}
-            outbound_tool_call["extra_content"] = extra_content
-        google = extra_content.get("google")
-        if not isinstance(google, dict):
-            google = {}
-            extra_content["google"] = google
-        google["thought_signature"] = signature
-
-
 # -- Structured summary templates ------------------------------------------
 
 _STRUCTURED_SUMMARY_PROMPT = """\
@@ -310,6 +279,7 @@ class AgentLoop:
         llm: ChatLLM client.
         memory: Workspace memory.
         max_iterations: Maximum number of iterations.
+        response_language: Language for AI responses.
     """
 
     def __init__(
@@ -320,6 +290,7 @@ class AgentLoop:
         event_callback: Optional[Callable[[str, Dict[str, Any]], None]] = None,
         max_iterations: int = 50,
         persistent_memory: Optional[Any] = None,
+        response_language: Optional[str] = None,
     ) -> None:
         """Initialize AgentLoop.
 
@@ -330,6 +301,7 @@ class AgentLoop:
             event_callback: Event callback (event_type, data).
             max_iterations: Maximum number of loop iterations.
             persistent_memory: PersistentMemory for cross-session recall.
+            response_language: Language for AI responses (English or Chinese).
         """
         self.registry = registry
         self.llm = llm
@@ -340,6 +312,7 @@ class AgentLoop:
         self._cancelled: bool = False
         self._previous_summary: str = ""
         self._persistent_memory = persistent_memory
+        self._response_language = response_language
 
     def cancel(self) -> None:
         """Cancel the current loop.
@@ -376,7 +349,8 @@ class AgentLoop:
         state_store.save_request(run_dir, user_message, {"session_id": session_id})
 
         context = ContextBuilder(self.registry, self.memory,
-                                  persistent_memory=self._persistent_memory)
+                                  persistent_memory=self._persistent_memory,
+                                  response_language=self._response_language)
         goal_context, active_goal_id = get_current_goal_context(session_id) if session_id else ("", None)
         llm_user_message = user_message
         if goal_context:
@@ -575,13 +549,13 @@ class AgentLoop:
                     react_trace.append({"type": "answer", "content": final_content[:500]})
                     break
 
-                assistant_message = context.format_assistant_tool_calls(
-                    response.tool_calls,
-                    content=response.content,
-                    reasoning_content=response.reasoning_content or thinking_text or None,
+                messages.append(
+                    context.format_assistant_tool_calls(
+                        response.tool_calls,
+                        content=response.content,
+                        reasoning_content=response.reasoning_content or thinking_text or None,
+                    )
                 )
-                _attach_tool_call_thought_signatures(assistant_message, response.tool_calls)
-                messages.append(assistant_message)
 
                 # Execute tools with read/write batching
                 compact_requested, focus_topic = self._process_tool_calls(

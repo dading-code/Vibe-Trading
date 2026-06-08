@@ -87,7 +87,7 @@ def _load_skill_dir(dir_path: Path) -> Optional[Skill]:
     )
 
 
-USER_SKILLS_DIR = Path.home() / ".vibe-trading" / "skills" / "user"
+USER_SKILLS_DIR = Path(__file__).resolve().parents[3] / "data" / "skills" / "user"
 
 
 class SkillsLoader:

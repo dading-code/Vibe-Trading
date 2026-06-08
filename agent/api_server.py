@@ -228,6 +228,7 @@ class SessionResponse(BaseModel):
 class SendMessageRequest(BaseModel):
     """Send chat message: natural-language strategy description."""
     content: str = Field(..., description="Natural language strategy description", min_length=1, max_length=5000)
+    language: Optional[str] = Field(None, description="Language for AI response (English or Chinese)")
 
 
 class MessageResponse(BaseModel):
@@ -651,13 +652,10 @@ def _validate_api_auth(
     allow_query: bool = False,
 ) -> None:
     """Validate configured auth, preserving loopback-only dev mode."""
-    # Loopback clients are always trusted, even when API_AUTH_KEY is set.
-    # The key only gates non-local (LAN/remote) access.
-    if _is_local_client(request):
-        return
-
     api_key = _configured_api_key()
     if not api_key:
+        if _is_local_client(request):
+            return
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="API_AUTH_KEY is required for non-local API access",
@@ -1895,11 +1893,13 @@ async def send_message(session_id: str, payload: SendMessageRequest, http_reques
     svc = _get_session_service()
     if not svc:
         raise HTTPException(status_code=501, detail="Session runtime not enabled")
+    print(f"[DEBUG] API received message with language: {payload.language}")
     try:
         result = await svc.send_message(
             session_id=session_id,
             content=payload.content,
             include_shell_tools=_shell_tools_enabled_for_request(http_request),
+            language=payload.language,
         )
         return result
     except ValueError as exc:
@@ -2028,7 +2028,7 @@ async def get_shadow_report(shadow_id: str, format: str = "html"):
     if format not in ("html", "pdf"):
         raise HTTPException(status_code=400, detail="format must be html or pdf")
 
-    reports_dir = Path.home() / ".vibe-trading" / "shadow_reports"
+    reports_dir = Path(__file__).resolve().parent / "data" / "shadow_reports"
     path = reports_dir / f"{shadow_id}.{format}"
     if not path.exists():
         raise HTTPException(status_code=404, detail=f"Shadow report not found: {shadow_id}.{format}")
@@ -3062,7 +3062,7 @@ async def stop_runner_endpoint(payload: LiveRunnerControlRequest):
 # ============================================================================
 
 from src.api.alpha_routes import register_alpha_routes  # noqa: E402
-register_alpha_routes(app)
+register_alpha_routes(app, require_auth=require_auth, require_event_stream_auth=require_event_stream_auth)
 
 
 # ============================================================================

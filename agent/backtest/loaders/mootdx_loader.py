@@ -17,7 +17,7 @@ from typing import Dict, List, Optional
 
 import pandas as pd
 
-from backtest.loaders.base import cached_loader_fetch, validate_date_range
+from backtest.loaders.base import validate_date_range
 from backtest.loaders.registry import register
 
 logger = logging.getLogger(__name__)
@@ -132,15 +132,7 @@ class DataLoader:
                 )
                 continue
             try:
-                df = cached_loader_fetch(
-                    source=self.name,
-                    symbol=code,
-                    timeframe=interval,
-                    start_date=start_date,
-                    end_date=end_date,
-                    fields=None,
-                    fetch=lambda code=code: self._fetch_one(code, start_date, end_date, interval),
-                )
+                df = self._fetch_one(code, start_date, end_date, interval)
                 if df is not None and not df.empty:
                     result[code] = df
             except Exception as exc:
