@@ -6,6 +6,7 @@ import { ErrorBoundary } from "./components/common/ErrorBoundary";
 import { router } from "./router";
 import "highlight.js/styles/github-dark-dimmed.min.css";
 import "./index.css";
+import "./lib/i18n";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>

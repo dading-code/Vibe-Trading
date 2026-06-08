@@ -75,15 +75,15 @@ def _configured_file_roots() -> list[Path]:
 def _default_file_roots() -> list[Path]:
     """Return default roots for uploaded/imported user files."""
     cwd = Path.cwd().resolve()
-    home = Path.home().resolve()
     agent_root = _agent_root()
+    project_data_dir = agent_root / "data"
     return [
         agent_root / "uploads",
         agent_root / "runs",
         cwd / "uploads",
         cwd / "data",
-        home / ".vibe-trading" / "uploads",
-        home / ".vibe-trading" / "imports",
+        project_data_dir / "uploads",
+        project_data_dir / "imports",
     ]
 
 
@@ -92,13 +92,13 @@ def _default_run_roots() -> list[Path]:
     from src.swarm.store import swarm_runs_root
 
     cwd = Path.cwd().resolve()
-    home = Path.home().resolve()
     agent_root = _agent_root()
+    project_data_dir = agent_root / "data"
     return [
         agent_root / "runs",
         swarm_runs_root(),
         cwd / "runs",
-        home / ".vibe-trading" / "shadow_runs",
+        project_data_dir / "shadow_runs",
     ]
 
 

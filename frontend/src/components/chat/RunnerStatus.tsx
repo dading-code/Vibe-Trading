@@ -12,6 +12,7 @@ import {
   OctagonX,
 } from "lucide-react";
 import { toast } from "sonner";
+import { useTranslation } from "react-i18next";
 import {
   api,
   type LiveStatus,
@@ -75,10 +76,6 @@ function summarizeLimits(limits: LiveMandateLimits | undefined): string {
   return parts.join(" · ");
 }
 
-function fallbackAuthorizeInstruction(): string {
-  return "Run `vibe-trading connector list`, choose the broker profile, then run `vibe-trading connector authorize <profile>` from the desktop session that will hold the broker connection.";
-}
-
 function BrokerRow({
   broker,
   halted,
@@ -88,6 +85,7 @@ function BrokerRow({
   halted: boolean;
   onRefresh: () => void;
 }) {
+  const { t } = useTranslation();
   const [busy, setBusy] = useState(false);
   const [authorizeHint, setAuthorizeHint] = useState<LiveAuthorizeResponse | null>(null);
   const [authorizeFailed, setAuthorizeFailed] = useState(false);
@@ -97,8 +95,8 @@ function BrokerRow({
   const mandate = broker.mandate ?? null;
   const countdown = formatCountdown(mandate?.expires_at);
   const authorizeInstruction = authorizeHint?.instruction
-    ?? (authorizeFailed ? fallbackAuthorizeInstruction() : "Loading connector authorization instructions...");
-  const authorizeNote = "The connector channel stays read-only until OAuth succeeds and a mandate is committed.";
+    ?? (authorizeFailed ? t("runner.runVibeTradingConnectorList") : t("runner.loadingConnectorAuthorizationInstructions"));
+  const authorizeNote = t("runner.theConnectorChannelStaysReadOnly");
 
   useEffect(() => {
     let cancelled = false;
@@ -115,7 +113,7 @@ function BrokerRow({
       });
 
     return () => { cancelled = true; };
-  }, [authorized, brokerKey]);
+  }, [authorized, brokerKey, t]);
 
   const toggleRunner = useCallback(async () => {
     if (busy) return;
@@ -123,18 +121,18 @@ function BrokerRow({
     try {
       if (runnerAlive) {
         await api.stopLiveRunner(brokerKey);
-        toast.success(`Runner stopped for ${brokerKey}`);
+        toast.success(`${t("runner.runnerStoppedFor")} ${brokerKey}`);
       } else {
         await api.startLiveRunner(brokerKey);
-        toast.success(`Runner started for ${brokerKey}`);
+        toast.success(`${t("runner.runnerStartedFor")} ${brokerKey}`);
       }
       onRefresh();
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : "Runner control failed.");
+      toast.error(error instanceof Error ? error.message : t("runner.runnerControlFailed"));
     } finally {
       setBusy(false);
     }
-  }, [brokerKey, busy, runnerAlive, onRefresh]);
+  }, [brokerKey, busy, runnerAlive, onRefresh, t]);
 
   return (
     <div className="grid gap-2 rounded-lg border bg-muted/20 p-2.5">
@@ -144,12 +142,12 @@ function BrokerRow({
           {authorized ? (
             <span className="inline-flex items-center gap-1 rounded-full bg-emerald-500/10 px-1.5 py-0.5 text-[10px] font-medium text-emerald-600 dark:text-emerald-400">
               <ShieldCheck className="h-2.5 w-2.5" />
-              Authorized
+              {t("runner.authorized")}
             </span>
           ) : (
             <span className="inline-flex items-center gap-1 rounded-full bg-muted px-1.5 py-0.5 text-[10px] font-medium text-muted-foreground">
               <CircleSlash className="h-2.5 w-2.5" />
-              Not connected
+              {t("runner.notConnected")}
             </span>
           )}
         </div>
@@ -162,7 +160,7 @@ function BrokerRow({
         <div className="grid gap-1.5 rounded-md border border-dashed border-primary/30 bg-primary/5 p-2">
           <div className="flex items-center gap-1.5 text-[11px] font-medium text-primary">
             <PlugZap className="h-3 w-3 shrink-0" />
-            Connect this profile to enable connector runtime
+            {t("runner.connectThisProfile")}
           </div>
           <p className="text-[10px] leading-relaxed text-muted-foreground">
             {authorizeInstruction}
@@ -179,16 +177,16 @@ function BrokerRow({
             <div className="rounded-md border bg-background/60 p-2">
               <div className="flex items-center gap-1 text-[10px] font-semibold uppercase tracking-wide text-muted-foreground">
                 <CircleDot className={["h-2.5 w-2.5", runnerAlive ? "text-emerald-500" : "text-muted-foreground"].join(" ")} />
-                Runner
+                {t("runner.runner")}
               </div>
               <div className={["mt-0.5 text-xs font-semibold", runnerAlive ? "text-emerald-600 dark:text-emerald-400" : "text-muted-foreground"].join(" ")}>
-                {runnerAlive ? "Running" : "Stopped"}
+                {runnerAlive ? t("runner.running") : t("runner.stopped")}
               </div>
             </div>
             <div className="rounded-md border bg-background/60 p-2">
               <div className="flex items-center gap-1 text-[10px] font-semibold uppercase tracking-wide text-muted-foreground">
                 <Activity className="h-2.5 w-2.5" />
-                Last tick
+                {t("runner.lastTick")}
               </div>
               <div className="mt-0.5 text-xs font-medium text-foreground">
                 {formatRelative(broker.runner?.last_tick)}
@@ -201,7 +199,7 @@ function BrokerRow({
               <div className="flex items-center justify-between gap-2">
                 <div className="flex items-center gap-1 text-[10px] font-semibold uppercase tracking-wide text-muted-foreground">
                   <ShieldCheck className="h-2.5 w-2.5" />
-                  Active mandate
+                  {t("runner.activeMandate")}
                 </div>
                 {mandate.expires_at && (
                   <span
@@ -216,17 +214,17 @@ function BrokerRow({
                     title={`Expires ${new Date(mandate.expires_at).toLocaleString()}`}
                   >
                     <Clock className="h-2.5 w-2.5" />
-                    {countdown.expired ? "expired" : `expires in ${countdown.label}`}
+                    {countdown.expired ? t("runner.expired") : `${t("runner.expiresIn")} ${countdown.label}`}
                   </span>
                 )}
               </div>
               <div className="mt-0.5 font-mono text-[11px] text-foreground">
-                {summarizeLimits(mandate.limits) || "limits unavailable"}
+                {summarizeLimits(mandate.limits) || t("runner.limitsUnavailable")}
               </div>
             </div>
           ) : (
             <div className="rounded-md border border-dashed bg-background/40 p-2 text-[10px] text-muted-foreground">
-              No active mandate. Ask the agent to propose one, then commit it before starting the connector runtime.
+              {t("runner.noActiveMandate")}
             </div>
           )}
 
@@ -234,11 +232,11 @@ function BrokerRow({
             {halted ? (
               <span className="inline-flex items-center gap-1 text-[10px] font-medium text-destructive">
                 <OctagonX className="h-3 w-3" />
-                Halted — runner controls disabled
+                {t("runner.haltedRunnerControlsDisabled")}
               </span>
             ) : (
               <span className="text-[10px] text-muted-foreground">
-                {runnerAlive ? "Runtime active inside mandate" : "Idle"}
+                {runnerAlive ? t("runner.runtimeActiveInsideMandate") : t("runner.idle")}
               </span>
             )}
             <button
@@ -254,7 +252,7 @@ function BrokerRow({
               title={runnerAlive ? "Stop the persistent runner" : "Start the persistent runner"}
             >
               {busy ? <Loader2 className="h-3 w-3 animate-spin" /> : <Power className="h-3 w-3" />}
-              {runnerAlive ? "Stop runner" : "Start runner"}
+              {runnerAlive ? t("runner.stopRunner") : t("runner.startRunner")}
             </button>
           </div>
         </>
@@ -275,6 +273,7 @@ function BrokerRow({
  * `api.stopLiveRunner`), never chat messages. Collapses to a compact toggle.
  */
 export const RunnerStatus = memo(function RunnerStatus({ status, unavailable, halted, onRefresh }: Props) {
+  const { t } = useTranslation();
   const [open, setOpen] = useState(false);
 
   if (unavailable) return null;
@@ -294,20 +293,20 @@ export const RunnerStatus = memo(function RunnerStatus({ status, unavailable, ha
         aria-expanded={open}
       >
         <Activity className="h-3 w-3 shrink-0" />
-        <span className="shrink-0">Connector runtime</span>
+        <span className="shrink-0">{t("runner.connectorRuntime")}</span>
         <span className="truncate text-muted-foreground">
-          {authorizedCount > 0 ? `${authorizedCount} connected` : "no connector connected"}
+          {authorizedCount > 0 ? `${authorizedCount} connected` : t("runner.noConnectorConnected")}
         </span>
         {anyRunning && !isHalted && (
           <span className="inline-flex items-center gap-1 rounded-full bg-emerald-500/10 px-1.5 py-0.5 text-[10px] font-medium text-emerald-600 dark:text-emerald-400">
             <CircleDot className="h-2.5 w-2.5" />
-            running
+            {t("runner.running")}
           </span>
         )}
         {isHalted && (
           <span className="inline-flex items-center gap-1 rounded-full bg-destructive/10 px-1.5 py-0.5 text-[10px] font-medium text-destructive">
             <OctagonX className="h-2.5 w-2.5" />
-            halted
+            {t("agent.connectorRuntimeHalted")}
           </span>
         )}
         <ChevronDown className={["h-3 w-3 shrink-0 transition-transform", open ? "rotate-180" : ""].join(" ")} aria-hidden="true" />

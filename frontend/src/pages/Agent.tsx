@@ -7,6 +7,7 @@ import { useSSE } from "@/hooks/useSSE";
 import { ApiError, api, type GoalSnapshot, type MandateProposal, type MandateCommitted, type LiveAction, type LiveHalted, type LiveStatus } from "@/lib/api";
 import { isReportWorthyRun } from "@/lib/runReports";
 import type { AgentMessage, ToolCallEntry } from "@/types/agent";
+import { useTranslation } from "react-i18next";
 import { AgentAvatar } from "@/components/chat/AgentAvatar";
 import { WelcomeScreen } from "@/components/chat/WelcomeScreen";
 import { MessageBubble } from "@/components/chat/MessageBubble";
@@ -15,12 +16,6 @@ import { ConversationTimeline } from "@/components/chat/ConversationTimeline";
 import { ToolProgressIndicator } from "@/components/chat/ToolProgressIndicator";
 import { MandateProposalCard } from "@/components/chat/MandateProposalCard";
 import { RunnerStatus } from "@/components/chat/RunnerStatus";
-import { SwarmStatusCard } from "@/components/chat/SwarmStatusCard";
-import {
-  applySwarmEvent,
-  buildSwarmStatusFromStarted,
-  buildSwarmStatusFromToolResultPreview,
-} from "@/lib/swarmStatus";
 
 /* ---------- Message grouping ---------- */
 type MsgGroup =
@@ -206,6 +201,7 @@ function goalContinuePrompt(snapshot: GoalSnapshot): string {
 
 /* ---------- Component ---------- */
 export function Agent() {
+  const { i18n } = useTranslation();
   const [input, setInput] = useState("");
   const [searchParams, setSearchParams] = useSearchParams();
   const listRef = useRef<HTMLDivElement>(null);
@@ -235,6 +231,9 @@ export function Agent() {
   const [goalSnapshot, setGoalSnapshot] = useState<GoalSnapshot | null>(null);
   const [goalEditActive, setGoalEditActive] = useState(false);
   const [goalEditValue, setGoalEditValue] = useState("");
+
+  const currentLanguage = i18n.language === "zh" ? "Chinese" : "English";
+  console.log("Current language:", i18n.language, "-> AI will respond in:", currentLanguage);
 
   /* Connector runtime channel state (SPEC Consent §1/§4/§5) */
   const [liveItems, setLiveItems] = useState<LiveItem[]>([]);
@@ -437,12 +436,6 @@ export function Agent() {
           elapsed_s: undefined,
           progress: undefined,
         });
-        if (toolName === "run_swarm") {
-          const fallback = buildSwarmStatusFromToolResultPreview(String(d.preview || ""));
-          if (fallback && !act().messages.some((m) => m.type === "swarm_status" && m.swarmRunId === fallback.runId)) {
-            act().upsertSwarmStatus(fallback);
-          }
-        }
       },
 
       tool_heartbeat: (d) => {
@@ -574,24 +567,6 @@ export function Agent() {
       "goal.created": () => {
         touch();
         loadGoalSnapshot(sid);
-      },
-
-      "swarm.started": (d) => {
-        touch();
-        const status = buildSwarmStatusFromStarted(d);
-        if (!status) return;
-        act().upsertSwarmStatus(status);
-        scrollToBottom();
-      },
-
-      "swarm.event": (d) => {
-        touch();
-        if (act().status !== "streaming") act().setStatus("streaming");
-        const runId = String(d.run_id || "");
-        const event = d.event;
-        if (!runId || !event) return;
-        act().updateSwarmStatus(runId, (current) => applySwarmEvent(current, event));
-        scrollToBottom();
       },
 
       "goal.evidence": () => {
@@ -792,7 +767,7 @@ export function Agent() {
         act().setStatus("streaming");
         forceScrollToBottom();
         setupSSE(sid);
-        await api.sendMessage(sid, kickoff);
+        await api.sendMessage(sid, kickoff, currentLanguage);
       } catch (error) {
         act().setStatus("idle");
         toast.error(error instanceof Error ? error.message : "Failed to start goal.");
@@ -827,7 +802,7 @@ export function Agent() {
         setSearchParams({ session: sid }, { replace: true });
       }
       setupSSE(sid);
-      await api.sendMessage(sid, finalPrompt);
+      await api.sendMessage(sid, finalPrompt, currentLanguage);
     } catch {
       act().setStatus("error");
       toast.error("Failed to send message, please retry.");
@@ -936,13 +911,13 @@ export function Agent() {
     inputRef.current?.focus();
     try {
       setupSSE(sessionId);
-      await api.sendMessage(sessionId, prompt);
+      await api.sendMessage(sessionId, prompt, currentLanguage);
     } catch {
       act().setStatus("error");
       toast.error("Failed to continue goal, please retry.");
       act().addMessage({ id: "", type: "error", content: "Failed to continue goal, please retry.", timestamp: Date.now() });
     }
-  }, [forceScrollToBottom, goalSnapshot, sessionId, setupSSE, status]);
+  }, [forceScrollToBottom, goalSnapshot, sessionId, setupSSE, status, currentLanguage]);
 
   const handleRetry = useCallback((errorMsg: AgentMessage) => {
     if (status === "streaming") return;
@@ -974,8 +949,6 @@ export function Agent() {
         lines.push(`## Error (${time})`, ``, msg.content, ``);
       } else if (msg.type === "tool_call") {
         lines.push(`> Tool call: ${msg.tool || "unknown"}`, ``);
-      } else if (msg.type === "swarm_status") {
-        lines.push(`> Swarm status: ${msg.swarmStatus?.preset || "swarm"} ${msg.swarmStatus?.status || ""}`, ``);
       } else if (msg.type === "run_complete") {
         lines.push(`> Backtest complete: ${msg.runId || ""}`, ``);
       }
@@ -1116,13 +1089,6 @@ export function Agent() {
               );
             }
             const msgIdx = messages.indexOf(g.msg);
-            if (g.msg.type === "swarm_status" && g.msg.swarmStatus) {
-              return (
-                <div key={row.key} data-msg-idx={msgIdx}>
-                  <SwarmStatusCard status={g.msg.swarmStatus} />
-                </div>
-              );
-            }
             return (
               <div key={row.key} data-msg-idx={msgIdx}>
                 <MessageBubble msg={g.msg} onRetry={g.msg.type === "error" ? handleRetry : undefined} />
@@ -1131,7 +1097,7 @@ export function Agent() {
           })}
 
           {/* Pre-stream placeholder: visible after Send, before first SSE event */}
-          {status === "streaming" && !streamingText && toolCalls.length === 0 && !messages.some((m) => m.type === "swarm_status" && m.swarmStatus?.status === "running") && (
+          {status === "streaming" && !streamingText && toolCalls.length === 0 && (
             <div className="flex gap-3">
               <AgentAvatar />
               <div className="flex-1 min-w-0 flex items-center gap-2 text-xs text-muted-foreground pt-1">

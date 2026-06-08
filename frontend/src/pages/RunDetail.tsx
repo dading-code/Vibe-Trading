@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import type { ReactNode } from "react";
 import { useParams, useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import {
   AlertTriangle,
   ArrowLeft,
@@ -17,16 +18,12 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { api, type BacktestMetrics, type RunCard, type RunData } from "@/lib/api";
-import ReactMarkdown from "react-markdown";
-import rehypeHighlight from "rehype-highlight";
 import { CandlestickChart } from "@/components/charts/CandlestickChart";
 import { EquityChart } from "@/components/charts/EquityChart";
 import { MetricsCard } from "@/components/chat/MetricsCard";
 import { ValidationPanel } from "@/components/charts/ValidationPanel";
 import { Skeleton, SkeletonMetrics, SkeletonChart } from "@/components/common/Skeleton";
 import { ErrorBoundary } from "@/components/common/ErrorBoundary";
-
-const rehypePlugins = [rehypeHighlight];
 
 type Tab = "chart" | "trades" | "runCard" | "code" | "validation";
 
@@ -63,6 +60,7 @@ function buildMetricsCsv(metrics: BacktestMetrics): string {
 }
 
 export function RunDetail() {
+  const { t } = useTranslation();
   const { runId } = useParams<{ runId: string }>();
   const navigate = useNavigate();
   const [run, setRun] = useState<RunData | null>(null);
@@ -73,11 +71,11 @@ export function RunDetail() {
   const hasValidation = !!run?.validation;
   const hasRunCard = !!run?.run_card;
   const TABS: { id: Tab; label: string; icon: typeof BarChart3; hidden?: boolean }[] = [
-    { id: "chart", label: "Chart", icon: BarChart3 },
-    { id: "trades", label: "Trades", icon: List },
-    { id: "validation", label: "Validation", icon: ShieldCheck, hidden: !hasValidation },
-    { id: "runCard", label: "Run Card", icon: FileCheck2, hidden: !hasRunCard },
-    { id: "code", label: "Code", icon: Code2 },
+    { id: "chart", label: t("runDetail.chart"), icon: BarChart3 },
+    { id: "trades", label: t("runDetail.trades"), icon: List },
+    { id: "validation", label: t("runDetail.validation"), icon: ShieldCheck, hidden: !hasValidation },
+    { id: "runCard", label: t("runDetail.runCard"), icon: FileCheck2, hidden: !hasRunCard },
+    { id: "code", label: t("runDetail.code"), icon: Code2 },
   ];
 
   useEffect(() => {
@@ -99,16 +97,15 @@ export function RunDetail() {
   }
   if (!run) return (
     <div className="p-8 space-y-2">
-      <p className="text-red-500 font-medium">Run not found</p>
+      <p className="text-red-500 font-medium">{t("runDetail.runNotFound")}</p>
       <p className="text-sm text-muted-foreground">
-        The run directory may have been removed, or your browser may not have API access configured.
-        Check that the API authentication key is set in Settings if accessing remotely.
+        {t("runDetail.runNotFoundDesc")}
       </p>
       <button
         onClick={() => navigate(-1)}
         className="text-sm text-primary hover:underline inline-flex items-center gap-1.5"
       >
-        <ArrowLeft className="h-3.5 w-3.5" /> Go back
+        <ArrowLeft className="h-3.5 w-3.5" /> {t("runDetail.goBack")}
       </button>
     </div>
   );
@@ -123,7 +120,7 @@ export function RunDetail() {
           <button
             onClick={() => navigate(-1)}
             className="p-1 rounded-md hover:bg-muted transition-colors text-muted-foreground hover:text-foreground"
-            title="Go back"
+            title={t("runDetail.goBack")}
           >
             <ArrowLeft className="h-4 w-4" />
           </button>
@@ -153,18 +150,18 @@ export function RunDetail() {
               <button
                 onClick={() => downloadCsv(`trades_${runId}.csv`, buildTradesCsv(run.trade_log!))}
                 className="flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs text-muted-foreground hover:bg-muted transition-colors"
-                title="Download Trades CSV"
+                title={t("runDetail.downloadTradesCsv")}
               >
-                <Download className="h-3.5 w-3.5" /> Download Trades CSV
+                <Download className="h-3.5 w-3.5" /> {t("runDetail.downloadTradesCsv")}
               </button>
             )}
             {run.metrics && (
               <button
                 onClick={() => downloadCsv(`metrics_${runId}.csv`, buildMetricsCsv(run.metrics!))}
                 className="flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs text-muted-foreground hover:bg-muted transition-colors"
-                title="Download Metrics CSV"
+                title={t("runDetail.downloadMetricsCsv")}
               >
-                <Download className="h-3.5 w-3.5" /> Download Metrics CSV
+                <Download className="h-3.5 w-3.5" /> {t("runDetail.downloadMetricsCsv")}
               </button>
             )}
           </div>
@@ -185,6 +182,7 @@ export function RunDetail() {
 }
 
 function RunCardTab({ card }: { card: RunCard }) {
+  const { t } = useTranslation();
   const backtest = card.backtest || {};
   const reproducibility = card.reproducibility || {};
   const metrics = card.metrics || {};
@@ -195,17 +193,17 @@ function RunCardTab({ card }: { card: RunCard }) {
   return (
     <div className="p-4 space-y-4">
       <div className="grid gap-3 md:grid-cols-4">
-        <RunCardStat label="Schema" value={card.schema_version || "unknown"} />
-        <RunCardStat label="Generated" value={formatRunCardValue(card.generated_at)} />
-        <RunCardStat label="Data sources" value={dataSources.length ? dataSources.join(", ") : "None recorded"} />
-        <RunCardStat label="Warnings" value={String(warnings.length)} tone={warnings.length ? "warning" : "normal"} />
+        <RunCardStat label={t("runDetail.schema")} value={card.schema_version || "unknown"} />
+        <RunCardStat label={t("runDetail.generated")} value={formatRunCardValue(card.generated_at)} />
+        <RunCardStat label={t("runDetail.dataSources")} value={dataSources.length ? dataSources.join(", ") : t("runDetail.noneRecorded")} />
+        <RunCardStat label={t("runDetail.warnings")} value={String(warnings.length)} tone={warnings.length ? "warning" : "normal"} />
       </div>
 
       {warnings.length > 0 && (
         <section className="rounded-md border border-amber-500/25 bg-amber-500/5 p-3">
           <div className="mb-2 flex items-center gap-2 text-sm font-medium text-amber-700 dark:text-amber-300">
             <AlertTriangle className="h-4 w-4" />
-            Warnings
+            {t("runDetail.warnings")}
           </div>
           <ul className="space-y-1 text-xs text-muted-foreground">
             {warnings.map((warning, index) => <li key={index}>{warning}</li>)}
@@ -214,38 +212,38 @@ function RunCardTab({ card }: { card: RunCard }) {
       )}
 
       <div className="grid gap-4 xl:grid-cols-2">
-        <RunCardPanel title="Backtest Summary" icon={Database}>
-          <KeyValueTable data={backtest} empty="No backtest summary recorded." />
+        <RunCardPanel title={t("runDetail.backtestSummary")} icon={Database}>
+          <KeyValueTable data={backtest} empty={t("runDetail.noBacktestSummary")} />
         </RunCardPanel>
-        <RunCardPanel title="Reproducibility" icon={Fingerprint}>
-          <KeyValueTable data={reproducibility} empty="No reproducibility hashes recorded." monospaceValues />
+        <RunCardPanel title={t("runDetail.reproducibility")} icon={Fingerprint}>
+          <KeyValueTable data={reproducibility} empty={t("runDetail.noReproducibilityHashes")} monospaceValues />
         </RunCardPanel>
       </div>
 
       <div className="grid gap-4 xl:grid-cols-2">
-        <RunCardPanel title="Metrics" icon={BarChart3}>
-          <KeyValueTable data={metrics} empty="No scalar metrics recorded." />
+        <RunCardPanel title={t("runDetail.metrics")} icon={BarChart3}>
+          <KeyValueTable data={metrics} empty={t("runDetail.noScalarMetrics")} />
         </RunCardPanel>
-        <RunCardPanel title="Validation" icon={ShieldCheck}>
+        <RunCardPanel title={t("runDetail.validation")} icon={ShieldCheck}>
           {card.validation ? (
             <pre className="max-h-80 overflow-auto rounded-md bg-muted/40 p-3 text-xs leading-relaxed">
               {JSON.stringify(card.validation, null, 2)}
             </pre>
           ) : (
-            <p className="text-sm text-muted-foreground">No validation payload recorded.</p>
+            <p className="text-sm text-muted-foreground">{t("runDetail.noValidationPayload")}</p>
           )}
         </RunCardPanel>
       </div>
 
-      <RunCardPanel title="Artifact Checksums" icon={FileCheck2}>
+      <RunCardPanel title={t("runDetail.artifactChecksums")} icon={FileCheck2}>
         {artifacts.length > 0 ? (
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
                 <tr className="border-b text-left text-muted-foreground">
-                  <th className="py-2 pr-4">Path</th>
-                  <th className="py-2 pr-4">Size</th>
-                  <th className="py-2">SHA-256</th>
+                  <th className="py-2 pr-4">{t("runDetail.path")}</th>
+                  <th className="py-2 pr-4">{t("runDetail.size")}</th>
+                  <th className="py-2">{t("runDetail.sha256")}</th>
                 </tr>
               </thead>
               <tbody>
@@ -260,7 +258,7 @@ function RunCardTab({ card }: { card: RunCard }) {
             </table>
           </div>
         ) : (
-          <p className="text-sm text-muted-foreground">No artifact checksums recorded.</p>
+          <p className="text-sm text-muted-foreground">{t("runDetail.noArtifactChecksums")}</p>
         )}
       </RunCardPanel>
     </div>
@@ -326,14 +324,15 @@ function shortHash(value: string): string {
 }
 
 function ChartTab({ run }: { run: RunData }) {
+  const { t } = useTranslation();
   const entries = run.price_series ? Object.entries(run.price_series) : [];
   const hasEquity = run.equity_curve && run.equity_curve.length > 0;
 
   if (entries.length === 0 && !hasEquity) {
     return (
       <div className="p-8 text-center text-muted-foreground space-y-2">
-        <p className="text-sm">No chart data available</p>
-        <p className="text-xs">The backtest engine may not have generated price data. Check the artifacts/ directory.</p>
+        <p className="text-sm">{t("runDetail.noChartData")}</p>
+        <p className="text-xs">{t("runDetail.noChartDataDesc")}</p>
       </div>
     );
   }
@@ -348,7 +347,7 @@ function ChartTab({ run }: { run: RunData }) {
       ))}
       {hasEquity && (
         <div>
-          <h3 className="text-sm font-medium mb-1">Equity & Drawdown</h3>
+          <h3 className="text-sm font-medium mb-1">{t("runDetail.equityDrawdown")}</h3>
           <EquityChart data={run.equity_curve!} height={280} />
         </div>
       )}
@@ -357,19 +356,20 @@ function ChartTab({ run }: { run: RunData }) {
 }
 
 function TradesTab({ run }: { run: RunData }) {
+  const { t } = useTranslation();
   const trades = run.trade_log || [];
-  if (trades.length === 0) return <div className="p-8 text-muted-foreground text-sm">No trades recorded.</div>;
+  if (trades.length === 0) return <div className="p-8 text-muted-foreground text-sm">{t("runDetail.noTrades")}</div>;
   return (
     <div className="p-4">
       <table className="w-full text-sm">
         <thead>
           <tr className="border-b text-left text-muted-foreground">
-            <th className="py-2 pr-4">Time</th>
-            <th className="py-2 pr-4">Code</th>
-            <th className="py-2 pr-4">Side</th>
-            <th className="py-2 pr-4">Price</th>
-            <th className="py-2 pr-4">Qty</th>
-            <th className="py-2">Reason</th>
+            <th className="py-2 pr-4">{t("runDetail.time")}</th>
+            <th className="py-2 pr-4">{t("runDetail.code")}</th>
+            <th className="py-2 pr-4">{t("runDetail.side")}</th>
+            <th className="py-2 pr-4">{t("runDetail.price")}</th>
+            <th className="py-2 pr-4">{t("runDetail.qty")}</th>
+            <th className="py-2">{t("runDetail.reason")}</th>
           </tr>
         </thead>
         <tbody>
@@ -390,21 +390,31 @@ function TradesTab({ run }: { run: RunData }) {
 }
 
 function CodeTab({ code }: { code: Record<string, string> }) {
+  const { t } = useTranslation();
   const files = Object.entries(code);
   const [active, setActive] = useState(files[0]?.[0] || "");
-  if (files.length === 0) return <div className="p-8 text-muted-foreground text-sm">No code files.</div>;
+  if (files.length === 0) return <div className="p-8 text-muted-foreground text-sm">{t("runDetail.noCodeFiles")}</div>;
   return (
     <div className="flex flex-col h-full">
       <div className="flex gap-1 p-2 border-b">
         {files.map(([name]) => (
-          <button key={name} onClick={() => setActive(name)} className={cn("px-3 py-1 rounded text-xs font-mono", active === name ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:bg-muted")}>{name}</button>
+          <button
+            key={name}
+            onClick={() => setActive(name)}
+            className={cn(
+              "px-3 py-1 text-xs rounded transition-colors",
+              active === name ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:bg-muted"
+            )}
+          >
+            {name}
+          </button>
         ))}
       </div>
-      <div className="flex-1 overflow-auto p-3 text-[11px] leading-relaxed bg-muted/20 [&_pre]:m-0 [&_pre]:bg-transparent [&_code]:text-[11px]">
-        <ReactMarkdown rehypePlugins={rehypePlugins}>
-          {`\`\`\`python\n${code[active] || ""}\n\`\`\``}
-        </ReactMarkdown>
-      </div>
+      {active && code[active] && (
+        <pre className="flex-1 overflow-auto p-4 bg-muted/30">
+          <code className="text-xs font-mono leading-relaxed">{code[active]}</code>
+        </pre>
+      )}
     </div>
   );
 }

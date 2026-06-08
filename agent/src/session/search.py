@@ -20,7 +20,7 @@ from typing import List, Optional
 
 logger = logging.getLogger(__name__)
 
-_DB_PATH = Path.home() / ".vibe-trading" / "sessions.db"
+_DB_PATH = Path(__file__).resolve().parent.parent.parent / "data" / "sessions.db"
 
 
 @dataclass(frozen=True)

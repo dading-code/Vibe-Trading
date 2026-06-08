@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState, useMemo, useCallback } from "react";
+import { useTranslation } from "react-i18next";
 import { cn } from "@/lib/utils";
 import { ChevronDown } from "lucide-react";
 import type { PriceBar, TradeMarker, IndicatorPoint } from "@/lib/api";
@@ -33,6 +34,7 @@ interface Props {
 }
 
 export function CandlestickChart({ data, markers, indicators, height = 500 }: Props) {
+  const { t } = useTranslation();
   const containerRef = useRef<HTMLDivElement>(null);
   const chartRef = useRef<ReturnType<typeof echarts.init> | null>(null);
   const [sub, setSub] = useState<Sub>("vol");
@@ -49,7 +51,6 @@ export function CandlestickChart({ data, markers, indicators, height = 500 }: Pr
     });
   }, []);
 
-  // Memoize base data arrays — only recompute when raw data changes
   const baseData = useMemo(() => {
     const dates = data.map(d => d.time);
     const closes = data.map(d => d.close);
@@ -60,7 +61,6 @@ export function CandlestickChart({ data, markers, indicators, height = 500 }: Pr
     return { dates, closes, highs, lows, opens, candle };
   }, [data]);
 
-  // Memoize indicator calculations — only recompute when data changes (not on overlay toggle)
   const indicatorCache = useMemo(() => ({
     ma5: calcMA(baseData.closes, 5),
     ma10: calcMA(baseData.closes, 10),
@@ -74,7 +74,6 @@ export function CandlestickChart({ data, markers, indicators, height = 500 }: Pr
     kdj: calcKDJ(baseData.highs, baseData.lows, baseData.closes),
   }), [baseData]);
 
-  // Memoize backend indicator series with Map lookup (O(1) instead of O(n) find)
   const extraIndicators = useMemo(() => {
     if (!indicators) return [];
     return Object.entries(indicators).map(([name, points]) => {
@@ -83,7 +82,6 @@ export function CandlestickChart({ data, markers, indicators, height = 500 }: Pr
     });
   }, [indicators, baseData.dates]);
 
-  // Init chart instance — only on mount/unmount and dark mode change
   useEffect(() => {
     if (!containerRef.current || data.length === 0) return;
     const chart = echarts.init(containerRef.current);
@@ -94,20 +92,17 @@ export function CandlestickChart({ data, markers, indicators, height = 500 }: Pr
     const ro = new ResizeObserver(() => chart.resize());
     ro.observe(containerRef.current);
     return () => { ro.disconnect(); chart.dispose(); chartRef.current = null; };
-  }, [data.length === 0, dark]); // only re-init when going empty↔non-empty or theme changes
+  }, [data.length === 0, dark]);
 
-  // Update chart options — setOption on existing instance, no dispose
   useEffect(() => {
     const chart = chartRef.current;
     if (!chart || data.length === 0) return;
 
-    const t = getChartTheme();
+    const t_theme = getChartTheme();
     const { dates, closes, opens, candle } = baseData;
 
-    // Overlay series
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const overlaySeries: any[] = [];
-    const legendNames: string[] = ["K"];
+    const legendNames: string[] = [t("charts.candlestick.kLine")];
     let colorIdx = 0;
 
     const overlayMap: Record<string, { name: string; data: (number | null)[] }> = {
@@ -130,61 +125,55 @@ export function CandlestickChart({ data, markers, indicators, height = 500 }: Pr
     if (overlays.has("boll")) {
       const boll = indicatorCache.boll;
       overlaySeries.push(
-        { name: "BOLL+", type: "line", data: boll.upper, xAxisIndex: 0, yAxisIndex: 0, symbol: "none", lineStyle: { color: t.bollColor, width: 0.8, type: "dashed" } },
-        { name: "BOLL", type: "line", data: boll.mid, xAxisIndex: 0, yAxisIndex: 0, symbol: "none", lineStyle: { color: t.bollColor, width: 1 } },
-        { name: "BOLL-", type: "line", data: boll.lower, xAxisIndex: 0, yAxisIndex: 0, symbol: "none", lineStyle: { color: t.bollColor, width: 0.8, type: "dashed" } },
+        { name: t("charts.candlestick.bollUpper"), type: "line", data: boll.upper, xAxisIndex: 0, yAxisIndex: 0, symbol: "none", lineStyle: { color: t_theme.bollColor, width: 0.8, type: "dashed" } },
+        { name: t("charts.candlestick.bollMid"), type: "line", data: boll.mid, xAxisIndex: 0, yAxisIndex: 0, symbol: "none", lineStyle: { color: t_theme.bollColor, width: 1 } },
+        { name: t("charts.candlestick.bollLower"), type: "line", data: boll.lower, xAxisIndex: 0, yAxisIndex: 0, symbol: "none", lineStyle: { color: t_theme.bollColor, width: 0.8, type: "dashed" } },
       );
-      legendNames.push("BOLL");
+      legendNames.push(t("charts.candlestick.bollMid"));
     }
 
-    // Trade markers
     const marks = (markers || []).map(m => ({
       coord: [m.time, m.price],
       value: m.side === "BUY" ? "B" : "S",
       name: [`${m.side} @ ${m.price}`, m.qty ? `Qty: ${m.qty}` : "", m.reason || ""].filter(Boolean).join("\n"),
-      itemStyle: { color: m.side === "BUY" ? t.upColor : t.downColor },
+      itemStyle: { color: m.side === "BUY" ? t_theme.upColor : t_theme.downColor },
       label: { color: "#fff", fontSize: 10, fontWeight: "bold" as const },
     }));
 
-    // Volume
     const vol = data.map((d, i) => ({
       value: d.volume,
-      itemStyle: { color: closes[i] >= opens[i] ? t.volumeUp : t.volumeDown },
+      itemStyle: { color: closes[i] >= opens[i] ? t_theme.volumeUp : t_theme.volumeDown },
     }));
 
-    // Sub-chart
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     let subSeries: any[] = [];
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    let subYAxis: any = { scale: true, gridIndex: 1, splitLine: { lineStyle: { color: t.gridColor } }, axisLabel: { color: t.textColor, fontSize: 10 } };
+    let subYAxis: any = { scale: true, gridIndex: 1, splitLine: { lineStyle: { color: t_theme.gridColor } }, axisLabel: { color: t_theme.textColor, fontSize: 10 } };
 
     if (sub === "vol") {
-      subSeries = [{ name: "Vol", type: "bar", data: vol, xAxisIndex: 1, yAxisIndex: 1 }];
+      subSeries = [{ name: t("charts.candlestick.vol"), type: "bar", data: vol, xAxisIndex: 1, yAxisIndex: 1 }];
       subYAxis = { ...subYAxis, axisLabel: { ...subYAxis.axisLabel, formatter: (v: number) => abbreviateNum(v) } };
-      legendNames.push("Vol");
+      legendNames.push(t("charts.candlestick.vol"));
     } else if (sub === "macd") {
       const m = indicatorCache.macd;
       subSeries = [
-        { name: "DIF", type: "line", data: m.dif, xAxisIndex: 1, yAxisIndex: 1, symbol: "none", lineStyle: { width: 1, color: t.infoColor } },
-        { name: "DEA", type: "line", data: m.signal, xAxisIndex: 1, yAxisIndex: 1, symbol: "none", lineStyle: { width: 1, color: t.warningColor } },
-        { name: "MACD", type: "bar", data: m.histogram.map(v => ({ value: v ?? 0, itemStyle: { color: (v ?? 0) >= 0 ? t.upColor : t.downColor } })), xAxisIndex: 1, yAxisIndex: 1 },
+        { name: t("charts.candlestick.dif"), type: "line", data: m.dif, xAxisIndex: 1, yAxisIndex: 1, symbol: "none", lineStyle: { width: 1, color: t_theme.infoColor } },
+        { name: t("charts.candlestick.dea"), type: "line", data: m.signal, xAxisIndex: 1, yAxisIndex: 1, symbol: "none", lineStyle: { width: 1, color: t_theme.warningColor } },
+        { name: t("charts.candlestick.macd"), type: "bar", data: m.histogram.map(v => ({ value: v ?? 0, itemStyle: { color: (v ?? 0) >= 0 ? t_theme.upColor : t_theme.downColor } })), xAxisIndex: 1, yAxisIndex: 1 },
       ];
-      legendNames.push("DIF", "DEA", "MACD");
+      legendNames.push(t("charts.candlestick.dif"), t("charts.candlestick.dea"), t("charts.candlestick.macd"));
     } else if (sub === "rsi") {
-      subSeries = [{ name: "RSI", type: "line", data: indicatorCache.rsi, xAxisIndex: 1, yAxisIndex: 1, symbol: "none", lineStyle: { width: 1.5, color: t.infoColor } }];
+      subSeries = [{ name: t("charts.candlestick.rsi"), type: "line", data: indicatorCache.rsi, xAxisIndex: 1, yAxisIndex: 1, symbol: "none", lineStyle: { width: 1.5, color: t_theme.infoColor } }];
       subYAxis = { ...subYAxis, min: 0, max: 100 };
-      legendNames.push("RSI");
+      legendNames.push(t("charts.candlestick.rsi"));
     } else {
       const kdj = indicatorCache.kdj;
       subSeries = [
-        { name: "%K", type: "line", data: kdj.k, xAxisIndex: 1, yAxisIndex: 1, symbol: "none", lineStyle: { width: 1, color: t.infoColor } },
-        { name: "%D", type: "line", data: kdj.d, xAxisIndex: 1, yAxisIndex: 1, symbol: "none", lineStyle: { width: 1, color: t.warningColor } },
-        { name: "%J", type: "line", data: kdj.j, xAxisIndex: 1, yAxisIndex: 1, symbol: "none", lineStyle: { width: 1, color: "#a855f7" } },
+        { name: t("charts.candlestick.k"), type: "line", data: kdj.k, xAxisIndex: 1, yAxisIndex: 1, symbol: "none", lineStyle: { width: 1, color: t_theme.infoColor } },
+        { name: t("charts.candlestick.d"), type: "line", data: kdj.d, xAxisIndex: 1, yAxisIndex: 1, symbol: "none", lineStyle: { width: 1, color: t_theme.warningColor } },
+        { name: t("charts.candlestick.j"), type: "line", data: kdj.j, xAxisIndex: 1, yAxisIndex: 1, symbol: "none", lineStyle: { width: 1, color: "#a855f7" } },
       ];
-      legendNames.push("%K", "%D", "%J");
+      legendNames.push(t("charts.candlestick.k"), t("charts.candlestick.d"), t("charts.candlestick.j"));
     }
 
-    // Backend custom indicators (Map-based O(1) lookup)
     const extraSeries = extraIndicators.map((ind, i) => {
       legendNames.push(ind.name);
       return { name: ind.name, type: "line" as const, data: ind.values, xAxisIndex: 0, yAxisIndex: 0, symbol: "none", lineStyle: { width: 1, color: OVERLAY_COLORS[(colorIdx + i) % OVERLAY_COLORS.length], type: "dashed" as const } };
@@ -197,22 +186,21 @@ export function CandlestickChart({ data, markers, indicators, height = 500 }: Pr
       backgroundColor: "transparent",
       tooltip: {
         trigger: "axis", axisPointer: { type: "cross" },
-        backgroundColor: t.tooltipBg, borderColor: t.tooltipBorder,
-        textStyle: { color: t.tooltipText, fontSize: 11 },
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        backgroundColor: t_theme.tooltipBg, borderColor: t_theme.tooltipBorder,
+        textStyle: { color: t_theme.tooltipText, fontSize: 11 },
         formatter: (params: any) => {
           if (!Array.isArray(params) || !params.length) return "";
           let html = `<b>${params[0].axisValue}</b>`;
           for (const p of params) {
-            if (p.seriesName === "K" && Array.isArray(p.value)) {
+            if (p.seriesName === t("charts.candlestick.kLine") && Array.isArray(p.value)) {
               const [open, close, low, high] = p.value;
               const chg = close - open;
               const pct = open ? ((chg / open) * 100).toFixed(2) : "0.00";
-              const clr = chg >= 0 ? t.upColor : t.downColor;
-              html += `<br/>O: ${open.toFixed(2)}&nbsp; H: ${high.toFixed(2)}`;
-              html += `<br/>L: ${low.toFixed(2)}&nbsp; C: <span style="color:${clr}"><b>${close.toFixed(2)}</b> ${chg >= 0 ? "+" : ""}${chg.toFixed(2)} (${chg >= 0 ? "+" : ""}${pct}%)</span>`;
-            } else if (p.seriesName === "Vol") {
-              html += `<br/>Vol: ${abbreviateNum(Number(p.value))}`;
+              const clr = chg >= 0 ? t_theme.upColor : t_theme.downColor;
+              html += `<br/>${t("charts.candlestick.open")}: ${open.toFixed(2)}&nbsp; ${t("charts.candlestick.high")}: ${high.toFixed(2)}`;
+              html += `<br/>${t("charts.candlestick.low")}: ${low.toFixed(2)}&nbsp; ${t("charts.candlestick.close")}: <span style="color:${clr}"><b>${close.toFixed(2)}</b> ${chg >= 0 ? "+" : ""}${chg.toFixed(2)} (${chg >= 0 ? "+" : ""}${pct}%)</span>`;
+            } else if (p.seriesName === t("charts.candlestick.vol")) {
+              html += `<br/>${t("charts.candlestick.vol")}: ${abbreviateNum(Number(p.value))}`;
             } else if (p.value != null) {
               html += `<br/>${p.marker} ${p.seriesName}: ${Number(p.value).toFixed(2)}`;
             }
@@ -221,20 +209,20 @@ export function CandlestickChart({ data, markers, indicators, height = 500 }: Pr
         },
       },
       toolbox: {
-        feature: { saveAsImage: { title: "Save" }, dataZoom: { title: { zoom: "Zoom", back: "Reset" } }, restore: { title: "Reset" } },
-        right: 8, top: 0, iconStyle: { borderColor: t.textColor },
+        feature: { saveAsImage: { title: t("charts.candlestick.save") }, dataZoom: { title: { zoom: t("charts.candlestick.zoom"), back: t("charts.candlestick.reset") } }, restore: { title: t("charts.candlestick.reset") } },
+        right: 8, top: 0, iconStyle: { borderColor: t_theme.textColor },
       },
-      legend: { data: legendNames, textStyle: { color: t.textColor, fontSize: 10 }, right: 80, top: 2, type: "scroll", itemWidth: 12, itemHeight: 8, itemGap: 8 },
+      legend: { data: legendNames, textStyle: { color: t_theme.textColor, fontSize: 10 }, right: 80, top: 2, type: "scroll", itemWidth: 12, itemHeight: 8, itemGap: 8 },
       grid: [
         { left: 8, right: 8, top: 36, height: "55%", containLabel: true },
         { left: 8, right: 8, top: "66%", height: "22%", containLabel: true },
       ],
       xAxis: [
-        { type: "category", data: dates, gridIndex: 0, axisLine: { lineStyle: { color: t.axisColor } }, axisLabel: { color: t.textColor, fontSize: 10 }, boundaryGap: true },
-        { type: "category", data: dates, gridIndex: 1, axisLine: { lineStyle: { color: t.axisColor } }, axisLabel: { show: false }, boundaryGap: true },
+        { type: "category", data: dates, gridIndex: 0, axisLine: { lineStyle: { color: t_theme.axisColor } }, axisLabel: { color: t_theme.textColor, fontSize: 10 }, boundaryGap: true },
+        { type: "category", data: dates, gridIndex: 1, axisLine: { lineStyle: { color: t_theme.axisColor } }, axisLabel: { show: false }, boundaryGap: true },
       ],
       yAxis: [
-        { scale: true, gridIndex: 0, splitLine: { lineStyle: { color: t.gridColor } }, axisLabel: { color: t.textColor, fontSize: 10 } },
+        { scale: true, gridIndex: 0, splitLine: { lineStyle: { color: t_theme.gridColor } }, axisLabel: { color: t_theme.textColor, fontSize: 10 } },
         subYAxis,
       ],
       dataZoom: [
@@ -243,8 +231,8 @@ export function CandlestickChart({ data, markers, indicators, height = 500 }: Pr
       ],
       series: [
         {
-          name: "K", type: "candlestick", data: candle, xAxisIndex: 0, yAxisIndex: 0,
-          itemStyle: { color: t.upColor, color0: t.downColor, borderColor: t.upColor, borderColor0: t.downColor },
+          name: t("charts.candlestick.kLine"), type: "candlestick", data: candle, xAxisIndex: 0, yAxisIndex: 0,
+          itemStyle: { color: t_theme.upColor, color0: t_theme.downColor, borderColor: t_theme.upColor, borderColor0: t_theme.downColor },
           markPoint: marks.length > 0 ? { data: marks, symbolSize: 28, tooltip: { formatter: (p: { name?: string; value?: string }) => p.name || p.value || "" } } : undefined,
         },
         ...overlaySeries,
@@ -252,16 +240,15 @@ export function CandlestickChart({ data, markers, indicators, height = 500 }: Pr
         ...subSeries,
       ],
     }, true);
-  }, [data, markers, baseData, indicatorCache, extraIndicators, sub, range, overlays, dark]);
+  }, [data, markers, baseData, indicatorCache, extraIndicators, sub, range, overlays, dark, t]);
 
   if (data.length === 0) {
-    return <div className="text-muted-foreground text-sm p-4">No price data</div>;
+    return <div className="text-muted-foreground text-sm p-4">{t("charts.candlestick.noPriceData")}</div>;
   }
 
   return (
     <div>
       <div className="flex items-center gap-2 mb-1 flex-wrap">
-        {/* Time range */}
         <div className="flex gap-0.5">
           {(["1M", "3M", "6M", "1Y", "ALL"] as const).map((r) => (
             <button key={r} onClick={() => setRange(r)} className={cn("px-1.5 py-0.5 rounded text-[10px] font-mono transition-colors", range === r ? "bg-primary/15 text-primary font-medium" : "text-muted-foreground/50 hover:text-muted-foreground")}>{r}</button>
@@ -270,13 +257,12 @@ export function CandlestickChart({ data, markers, indicators, height = 500 }: Pr
 
         <div className="w-px h-3 bg-border/40" />
 
-        {/* Indicator dropdown */}
         <div className="relative">
           <button
             onClick={() => setShowMenu(!showMenu)}
             className="flex items-center gap-1 px-2 py-0.5 rounded text-[10px] text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-colors"
           >
-            Indicators ({overlays.size}) <ChevronDown className="h-3 w-3" />
+            {t("charts.candlestick.indicators")} ({overlays.size}) <ChevronDown className="h-3 w-3" />
           </button>
           {showMenu && (
             <div className="absolute top-full left-0 mt-1 z-50 bg-card border rounded-lg shadow-lg p-2 min-w-[160px]" onMouseLeave={() => setShowMenu(false)}>
@@ -293,7 +279,7 @@ export function CandlestickChart({ data, markers, indicators, height = 500 }: Pr
               ))}
               <div className="border-t mt-1 pt-1">
                 <button onClick={() => { setOverlays(new Set()); setShowMenu(false); }} className="text-[10px] text-muted-foreground hover:text-foreground px-1 py-0.5 w-full text-left rounded hover:bg-muted/30">
-                  Bare K (clear all)
+                  {t("charts.candlestick.bareK")}
                 </button>
               </div>
             </div>
@@ -302,10 +288,9 @@ export function CandlestickChart({ data, markers, indicators, height = 500 }: Pr
 
         <div className="w-px h-3 bg-border/40" />
 
-        {/* Sub-chart selector */}
         <div className="flex gap-0.5">
           {(["vol", "macd", "rsi", "kdj"] as const).map((id) => (
-            <button key={id} onClick={() => setSub(id)} className={cn("px-1.5 py-0.5 rounded text-[10px] font-mono uppercase transition-colors", sub === id ? "bg-primary/15 text-primary font-medium" : "text-muted-foreground/50 hover:text-muted-foreground")}>{id}</button>
+            <button key={id} onClick={() => setSub(id)} className={cn("px-1.5 py-0.5 rounded text-[10px] font-mono uppercase transition-colors", sub === id ? "bg-primary/15 text-primary font-medium" : "text-muted-foreground/50 hover:text-muted-foreground")}>{t(`charts.candlestick.${id}`)}</button>
           ))}
         </div>
       </div>

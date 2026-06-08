@@ -89,6 +89,7 @@ class SessionService:
         role: str = "user",
         *,
         include_shell_tools: bool = False,
+        language: Optional[str] = None,
     ) -> Dict[str, Any]:
         """Send a message to a session and trigger execution.
 
@@ -97,10 +98,12 @@ class SessionService:
             content: Message content.
             role: Message role.
             include_shell_tools: Whether this attempt may use shell tools.
+            language: Language for AI response (English or Chinese).
 
         Returns:
             Dictionary containing message_id and attempt_id.
         """
+        print(f"[DEBUG] SessionService.send_message called with language: {language}")
         session = self.store.get_session(session_id)
         if not session:
             raise ValueError(f"Session {session_id} not found")
@@ -118,6 +121,9 @@ class SessionService:
         session.config["include_shell_tools"] = include_shell_tools
         session.last_attempt_id = attempt.attempt_id
         session.updated_at = datetime.now().isoformat()
+        if language:
+            session.config["response_language"] = language
+            print(f"[DEBUG] Saved response_language to session config: {language}")
         self.store.update_session(session)
         self.event_bus.emit(session_id, "attempt.created", {"attempt_id": attempt.attempt_id, "prompt": content})
 
@@ -229,6 +235,12 @@ class SessionService:
         safe_overrides = sanitize_session_overrides(session_config) if session_config else session_config
         agent_config = load_runtime_agent_config(overrides=safe_overrides)
 
+        # Get response language from session config
+        response_language = session_config.get("response_language") if session_config else None
+        if not response_language:
+            response_language = "Chinese"  # 默认使用中文
+        print(f"[DEBUG] _run_with_agent using response_language: {response_language}")
+
         def event_callback(event_type: str, data: Dict[str, Any]) -> None:
             """Forward AgentLoop events to the SSE event bus."""
             data["attempt_id"] = attempt_id
@@ -256,6 +268,7 @@ class SessionService:
             event_callback=event_callback,
             max_iterations=50,
             persistent_memory=pm,
+            response_language=response_language,
         )
         self._active_loops[session_id] = agent
 

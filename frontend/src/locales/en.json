@@ -1,0 +1,651 @@
+{
+  "app": {
+    "name": "Vibe-Trading",
+    "version": "v0.1.9"
+  },
+  "nav": {
+    "home": "Home",
+    "agent": "Agent",
+    "alphaZoo": "Alpha Zoo",
+    "settings": "Settings",
+    "correlation": "Correlation Matrix"
+  },
+  "home": {
+    "title": "AI-Powered Quant Strategy Research",
+    "description": "Describe a trading strategy in natural language. The agent generates code, runs backtests, and optimizes — all in real time.",
+    "startResearch": "Start Research",
+    "features": {
+      "aiAgent": {
+        "title": "AI Agent",
+        "desc": "Natural language strategy generation with ReAct reasoning"
+      },
+      "builtInBacktest": {
+        "title": "Built-in Backtest",
+        "desc": "7 data sources across A-shares, US/HK & Crypto"
+      },
+      "realTimeStreaming": {
+        "title": "Real-time Streaming",
+        "desc": "Watch the agent think, call tools, and iterate"
+      },
+      "strategyReplay": {
+        "title": "Strategy Replay",
+        "desc": "Trade journal analyzer + Shadow Account — extract your rules, backtest them, attribute PnL delta"
+      }
+    }
+  },
+  "welcome": {
+    "subtitle": "vibe trading with your professional financial agent team",
+    "description": "Describe a trading strategy to get started.",
+    "tryExample": "Try an example:",
+    "capabilityChips": {
+      "financeSkillsLibrary": "Finance Skills Library",
+      "swarmAgentTeams": "Swarm Agent Teams",
+      "autoDiscoveredTools": "Auto-Discovered Tools",
+      "3Markets": "3 Markets: A-Share · Crypto · HK/US",
+      "tradingConnectorProfiles": "Trading Connector Profiles",
+      "minuteToDailyTimeframes": "Minute to Daily Timeframes",
+      "4PortfolioOptimizers": "4 Portfolio Optimizers",
+      "15RiskMetrics": "15+ Risk Metrics",
+      "optionsAndDerivatives": "Options & Derivatives",
+      "pdfAndWebResearch": "PDF & Web Research",
+      "factorAnalysisAndML": "Factor Analysis & ML",
+      "tradeJournalAnalyzer": "Trade Journal Analyzer",
+      "shadowAccountBacktest": "Shadow Account Backtest",
+      "persistentMemory": "Persistent Memory",
+      "sessionSearch": "Session Search"
+    },
+    "categories": {
+      "multiMarketBacktest": {
+        "label": "Multi-Market Backtest",
+        "examples": {
+          "crossMarketPortfolio": {
+            "title": "Cross-Market Portfolio",
+            "desc": "A-shares + crypto + US equities with risk-parity optimizer"
+          },
+          "btc5MinMacdStrategy": {
+            "title": "BTC 5-Min MACD Strategy",
+            "desc": "Minute-level crypto backtest with real-time OKX data"
+          },
+          "usTechMaxDiversification": {
+            "title": "US Tech Max Diversification",
+            "desc": "Portfolio optimizer across FAANG+ via yfinance"
+          }
+        }
+      },
+      "researchAndAnalysis": {
+        "label": "Research & Analysis",
+        "examples": {
+          "multiFactorAlphaModel": {
+            "title": "Multi-Factor Alpha Model",
+            "desc": "IC-weighted factor synthesis across 300 stocks"
+          },
+          "optionsGreeksAnalysis": {
+            "title": "Options Greeks Analysis",
+            "desc": "Black-Scholes pricing with Delta/Gamma/Theta/Vega"
+          }
+        }
+      },
+      "swarmTeams": {
+        "label": "Swarm Teams",
+        "examples": {
+          "investmentCommitteeReview": {
+            "title": "Investment Committee Review",
+            "desc": "Multi-agent debate: long vs short, risk review, PM decision"
+          },
+          "quantStrategyDesk": {
+            "title": "Quant Strategy Desk",
+            "desc": "Screening → factor research → backtest → risk audit pipeline"
+          }
+        }
+      },
+      "documentAndWebResearch": {
+        "label": "Document & Web Research",
+        "examples": {
+          "analyzeEarningsReportPdf": {
+            "title": "Analyze an Earnings Report PDF",
+            "desc": "Upload a PDF and ask questions about the financials"
+          },
+          "webResearchMacroOutlook": {
+            "title": "Web Research: Macro Outlook",
+            "desc": "Read live web sources for macro analysis"
+          }
+        }
+      },
+      "tradeJournal": {
+        "label": "Trade Journal",
+        "examples": {
+          "analyzeMyBrokerExport": {
+            "title": "Analyze My Broker Export",
+            "desc": "Parse 同花顺/东财/富途/generic CSV — holding days, win rate, PnL ratio, hourly distribution"
+          },
+          "diagnoseMyBehaviorBiases": {
+            "title": "Diagnose My Behavior Biases",
+            "desc": "Disposition effect, overtrading, chasing momentum, anchoring — severity + numeric evidence"
+          }
+        }
+      },
+      "tradingConnectors": {
+        "label": "Trading Connectors",
+        "examples": {
+          "checkSelectedConnector": {
+            "title": "Check Selected Connector",
+            "desc": "List connector profiles and verify the selected one"
+          },
+          "analyzeConnectorPortfolio": {
+            "title": "Analyze Connector Portfolio",
+            "desc": "Read account summary and positions from the selected connector"
+          },
+          "quoteAndTrend": {
+            "title": "Quote & Trend",
+            "desc": "Fetch a quote plus recent daily bars through the selected connector"
+          }
+        }
+      },
+      "shadowAccount": {
+        "label": "Shadow Account",
+        "examples": {
+          "trainMyShadowFromJournal": {
+            "title": "Train My Shadow from Journal",
+            "desc": "Extract your strategy rules from a broker CSV and persist a Shadow profile"
+          },
+          "howMuchAmILeavingOnTable": {
+            "title": "How Much Am I Leaving on the Table?",
+            "desc": "Backtest your shadow strategy and attribute delta vs. your actual PnL"
+          },
+          "generateShadowReport": {
+            "title": "Generate Shadow Report",
+            "desc": "8-section HTML/PDF — equity curve, per-market Sharpe, attribution waterfall"
+          }
+        }
+      }
+    }
+  },
+  "layout": {
+    "sessions": "Sessions",
+    "newChat": "New Chat",
+    "noSessionsYet": "No sessions yet",
+    "confirm": "Confirm",
+    "cancel": "Cancel",
+    "rename": "Rename",
+    "delete": "Delete?",
+    "light": "Light",
+    "dark": "Dark",
+    "expand": "Expand",
+    "collapse": "Collapse"
+  },
+  "settings": {
+    "title": "Settings",
+    "description": "Configure model credentials and market data source tokens for this local project.",
+    "localApiAccess": {
+      "title": "Local API access",
+      "description": "For remote or private Web UI deployments, enter the server API key once in this browser. Localhost use can stay blank.",
+      "serverApiKey": "Server API key",
+      "saveLocalKey": "Save local key",
+      "storedOnlyInBrowser": "Stored only in this browser. Leave blank to clear it."
+    },
+    "llmSettings": {
+      "title": "LLM Settings",
+      "description": "Choose the model used by the agent and save it to the project-local agent/.env file.",
+      "connection": "Connection",
+      "provider": "Provider",
+      "changingProvidersUpdates": "Changing providers updates the recommended model and endpoint.",
+      "model": "Model",
+      "useProviderDefaults": "Use provider defaults",
+      "useExactModelId": "Use the exact model id required by your provider.",
+      "baseUrl": "Base URL",
+      "oAuth": "OAuth",
+      "apiKey": "API key",
+      "configured": "Configured",
+      "leaveBlankToKeepCurrentKey": "Leave blank to keep the current key",
+      "thisProviderDoesNotRequireApiKey": "This provider does not require an API key.",
+      "clearSavedApiKey": "Clear saved API key",
+      "generation": "Generation",
+      "temperature": "Temperature",
+      "timeoutSeconds": "Timeout seconds",
+      "maxRetries": "Max retries",
+      "reasoningEffort": "Reasoning effort",
+      "off": "Off",
+      "howHardModelThinks": "How hard the model thinks before answering. Higher is more thorough but slower; leave Off for fastest replies.",
+      "savedTo": "Saved to:",
+      "saveSettings": "Save settings",
+      "saving": "Saving..."
+    },
+    "dataSourceSettings": {
+      "title": "Data Source Settings",
+      "description": "Configure optional market data credentials used by backtests and research agents.",
+      "tushareToken": "Tushare token",
+      "usedForChinaAshare": "Used for China A-share, futures, fund, and macro data. If unset, the project falls back to AKShare where available.",
+      "clearSavedTushareToken": "Clear saved Tushare token",
+      "saveDataSourceSettings": "Save data source settings",
+      "baostock": "BaoStock",
+      "loaderAvailable": "Loader available",
+      "noProjectLoader": "No project loader",
+      "pythonPackageInstalled": "Python package installed",
+      "pythonPackageNotInstalled": "Python package not installed"
+    },
+    "loading": "Loading...",
+    "settingsAreUnavailable": "Settings are unavailable",
+    "localApiKeySaved": "Local API key saved",
+    "llmSettingsSaved": "LLM settings saved",
+    "failedToLoadLlmSettings": "Failed to load LLM settings",
+    "failedToLoadDataSourceSettings": "Failed to load data source settings",
+    "dataSourceSettingsSaved": "Data source settings saved",
+    "failedToSaveLlmSettings": "Failed to save LLM settings",
+    "failedToSaveDataSourceSettings": "Failed to save data source settings",
+    "unknownError": "Unknown error"
+  },
+  "language": {
+    "switch": "Switch Language",
+    "en": "English",
+    "zh": "中文"
+  },
+  "agent": {
+    "connectionLost": "Connection lost, reconnecting…",
+    "connectionRestored": "Connection restored",
+    "failedToLoadGoal": "Failed to load goal.",
+    "researchGoalAttached": "Research goal attached",
+    "startWorkingOnThisResearchGoalNow": "Start working on this research goal now.",
+    "keepItResearchOnly": "Keep it research-only, use available tools when evidence is needed, add concrete evidence to the goal ledger, and keep going until the goal is complete, blocked, waiting for user input, or budget-limited.",
+    "continueTheActiveResearchGoal": "Continue the active research goal.",
+    "useRealAvailableTools": "Use real available tools as needed, add evidence to the goal ledger, and only stop when the goal is complete, blocked, waiting for user input, or budget-limited.",
+    "allCriteriaAppearCovered": "All criteria appear covered; audit the ledger and update the goal status if completion is justified.",
+    "cancelRequestSent": "Cancel request sent",
+    "cancelFailed": "Cancel failed",
+    "failedToStartGoal": "Failed to start goal.",
+    "executionTimedOut": "Execution timed out, automatically stopped",
+    "connectorRuntimeHalted": "Connector runtime halted",
+    "connectorRuntimeHaltedRunnerStopped": "Connector runtime halted — runner stopped, resting orders cancelled",
+    "connectorRuntimeResumed": "Connector runtime resumed",
+    "failedToHaltConnectorRuntime": "Failed to halt connector runtime.",
+    "researchGoalCancelled": "Research goal cancelled",
+    "failedToCancelGoal": "Failed to cancel goal.",
+    "researchGoalUpdated": "Research goal updated",
+    "failedToUpdateGoal": "Failed to update goal.",
+    "failedToContinueGoal": "Failed to continue goal, please retry.",
+    "failedToSendMessage": "Failed to send message, please retry.",
+    "executablesAndArchivesNotAllowed": "Executables and archives are not allowed",
+    "fileSizeExceedsLimit": "File size exceeds 50 MB limit",
+    "uploaded": "Uploaded:",
+    "uploadFailed": "Upload failed:",
+    "unknownError": "Unknown error",
+    "agentIsWorking": "Agent is working…",
+    "newMessages": "New messages",
+    "running": "running",
+    "swarmTeamMode": "Swarm Team Mode",
+    "useTheSwarmTool": "Use the swarm tool to assemble the best specialist team for this task. Auto-select the most appropriate preset.",
+    "newResearchGoal": "New Research Goal",
+    "goal": "Goal",
+    "evidence": "evidence",
+    "cancelEditGoal": "Cancel",
+    "saveGoalEdit": "Save",
+    "cancelGoal": "Cancel Goal",
+    "startResearching": "Start Researching",
+    "continueResearching": "Continue Researching",
+    "goalCancelledFromWebUi": "Cancelled from Web UI.",
+    "attachResearchGoal": "Attach Research Goal",
+    "criteria": "Criteria",
+    "required": "Required",
+    "attachFile": "Attach File",
+    "swarmMode": "Swarm Mode",
+    "uploading": "Uploading…",
+    "exportChat": "Export Chat",
+    "exportChatTitle": "# Chat Export",
+    "exportTime": "Export time:",
+    "user": "User",
+    "assistant": "Assistant",
+    "error": "Error",
+    "toolCall": "Tool call:",
+    "backtestComplete": "Backtest complete:",
+    "executionFailed": "Execution failed",
+    "notConnected": "Not connected",
+    "connectThisProfile": "Connect this profile to enable connector runtime",
+    "runVibeTradingConnectorAuthorize": "Run `vibe-trading connector authorize",
+    "thisOpensTheBrokersOAuth": "This opens the broker's own OAuth consent flow; Vibe-Trading never holds funds and only relays intent once you authorize.",
+    "theConnectorChannelStaysReadOnly": "The connector channel stays read-only until OAuth succeeds and a mandate is committed.",
+    "connectorRuntime": "Connector runtime"
+  },
+  "common": {
+    "fromTheDeviceThatWillHoldTheBrokerSession": "from the device that will hold the broker session.",
+    "eGCreateADualMaCrossoverStrategy": "e.g. Create a dual MA crossover strategy for 000001.SZ, backtest 2024"
+  },
+  "runner": {
+    "authorized": "Authorized",
+    "notConnected": "Not connected",
+    "connectThisProfile": "Connect this profile to enable connector runtime",
+    "runVibeTradingConnectorList": "Run `vibe-trading connector list`, choose the broker profile, then run `vibe-trading connector authorize <profile>` from the desktop session that will hold the broker connection.",
+    "loadingConnectorAuthorizationInstructions": "Loading connector authorization instructions...",
+    "theConnectorChannelStaysReadOnly": "The connector channel stays read-only until OAuth succeeds and a mandate is committed.",
+    "runner": "Runner",
+    "running": "Running",
+    "stopped": "Stopped",
+    "lastTick": "Last tick",
+    "activeMandate": "Active mandate",
+    "expiresIn": "expires in",
+    "expired": "expired",
+    "limitsUnavailable": "limits unavailable",
+    "noActiveMandate": "No active mandate. Ask the agent to propose one, then commit it before starting the connector runtime.",
+    "haltedRunnerControlsDisabled": "Halted — runner controls disabled",
+    "runtimeActiveInsideMandate": "Runtime active inside mandate",
+    "idle": "Idle",
+    "stopRunner": "Stop runner",
+    "startRunner": "Start runner",
+    "runnerStoppedFor": "Runner stopped for",
+    "runnerStartedFor": "Runner started for",
+    "runnerControlFailed": "Runner control failed.",
+    "connectorRuntime": "Connector runtime",
+    "noConnectorConnected": "no connector connected"
+  },
+  "connectionBanner": {
+    "connectionLostReconnecting": "Connection lost, reconnecting (attempt {attempt})…",
+    "connectionLost": "Connection lost"
+  },
+  "messageBubble": {
+    "copied": "Copied",
+    "copy": "Copy",
+    "executionTimedOutHint": "Execution timed out. Try simplifying the strategy or reducing the number of assets.",
+    "apiFailedHint": "API call failed. Please retry later.",
+    "executionFailedHint": "Execution failed. Click to retry."
+  },
+  "runCompleteCard": {
+    "fullReport": "Full Report →",
+    "pineScript": "Pine Script",
+    "shadowReport": "Shadow Report"
+  },
+  "pineScriptViewer": {
+    "pineScriptV6": "Pine Script v6",
+    "strategyPine": "strategy.pine",
+    "copied": "Copied",
+    "copy": "Copy",
+    "docs": "Docs",
+    "footerText": "TradingView Pine Editor → New blank indicator → Paste code → Add to Chart"
+  },
+  "mandateProposalCard": {
+    "noLeverage": "no leverage",
+    "leverageSuffix": "× leverage",
+    "adjust": "Adjust",
+    "universe": "Universe",
+    "maxOrder": "Max order",
+    "dailyCap": "Daily cap",
+    "tradesPerDay": "trades/day",
+    "leverage": "Leverage",
+    "instruments": "Instruments",
+    "adjustPlaceholder": "e.g. keep this but raise the daily cap to 10",
+    "cancel": "Cancel",
+    "sendAdjustment": "Send adjustment",
+    "committing": "Committing…",
+    "commitLabel": "Commit “{label}”",
+    "cannotCommitError": "Cannot commit mandate: connector broker is missing. Ask the agent to regenerate the proposal.",
+    "failedToCommit": "Failed to commit mandate.",
+    "mandateActive": "Mandate {ordinal}active",
+    "expiresOn": "expires {date}",
+    "reauthorizeConnector": "Re-authorize connector mandate",
+    "connectorRuntimeMandate": "Connector runtime mandate",
+    "forMandateProposal": "For mandate proposal \"{label}\" (option {ordinal}): {text}"
+  },
+  "thinkingTimeline": {
+    "processing": "Processing",
+    "running": "Running",
+    "done": "Done",
+    "steps": "steps",
+    "runningTool": "Running {tool}..."
+  },
+  "metrics": {
+    "total_return": "Total Return",
+    "annual_return": "Annual",
+    "sharpe": "Sharpe",
+    "max_drawdown": "Max DD",
+    "win_rate": "Win Rate",
+    "trade_count": "Trades",
+    "final_value": "Final Value",
+    "calmar": "Calmar",
+    "sortino": "Sortino",
+    "profit_loss_ratio": "P/L Ratio",
+    "max_consecutive_loss": "Max Consec. Loss",
+    "avg_holding_days": "Avg Hold Days",
+    "benchmark_return": "Benchmark",
+    "excess_return": "Excess Return",
+    "information_ratio": "IR"
+  },
+  "tools": {
+    "load_skill": "Load strategy knowledge",
+    "write_file": "Generate code",
+    "edit_file": "Edit code",
+    "read_file": "Read file",
+    "run_backtest": "Run backtest",
+    "bash": "Run command",
+    "read_url": "Read webpage",
+    "read_document": "Read document",
+    "trading_connections": "List trading connectors",
+    "trading_select_connection": "Select trading connector",
+    "trading_check": "Check trading connector",
+    "trading_account": "Read connector account",
+    "trading_positions": "Read connector positions",
+    "trading_orders": "Read connector orders",
+    "trading_quote": "Read connector quote",
+    "trading_history": "Read connector history",
+    "compact": "Summarize conversation",
+    "create_task": "Create task",
+    "update_task": "Update task",
+    "spawn_subagent": "Spawn sub-agent"
+  },
+  "runDetail": {
+    "chart": "Chart",
+    "trades": "Trades",
+    "validation": "Validation",
+    "runCard": "Run Card",
+    "code": "Code",
+    "runNotFound": "Run not found",
+    "runNotFoundDesc": "The run directory may have been removed, or your browser may not have API access configured. Check that the API authentication key is set in Settings if accessing remotely.",
+    "goBack": "Go back",
+    "downloadTradesCsv": "Download Trades CSV",
+    "downloadMetricsCsv": "Download Metrics CSV",
+    "schema": "Schema",
+    "generated": "Generated",
+    "dataSources": "Data sources",
+    "warnings": "Warnings",
+    "noneRecorded": "None recorded",
+    "backtestSummary": "Backtest Summary",
+    "noBacktestSummary": "No backtest summary recorded.",
+    "reproducibility": "Reproducibility",
+    "noReproducibilityHashes": "No reproducibility hashes recorded.",
+    "metrics": "Metrics",
+    "noScalarMetrics": "No scalar metrics recorded.",
+    "validation": "Validation",
+    "noValidationPayload": "No validation payload recorded.",
+    "artifactChecksums": "Artifact Checksums",
+    "path": "Path",
+    "size": "Size",
+    "sha256": "SHA-256",
+    "noArtifactChecksums": "No artifact checksums recorded.",
+    "noChartData": "No chart data available",
+    "noChartDataDesc": "The backtest engine may not have generated price data. Check the artifacts/ directory.",
+    "equityDrawdown": "Equity & Drawdown",
+    "noTrades": "No trades recorded.",
+    "time": "Time",
+    "code": "Code",
+    "side": "Side",
+    "price": "Price",
+    "qty": "Qty",
+    "reason": "Reason",
+    "noCodeFiles": "No code files."
+  },
+  "charts": {
+    "validation": {
+      "noValidationData": "No validation data available.",
+      "monteCarlo": {
+        "title": "Monte Carlo Permutation Test",
+        "significant": "Significant",
+        "notSignificant": "Not Significant",
+        "description": "Shuffled trade order {simulations} times to test if Sharpe is better than random.",
+        "actualSharpe": "Actual Sharpe",
+        "pValueSharpe": "p-value (Sharpe)",
+        "simulatedMean": "Simulated Mean",
+        "simulated90Range": "Simulated 90% Range",
+        "p5": "P5",
+        "actual": "Actual",
+        "p95": "P95"
+      },
+      "bootstrap": {
+        "title": "Bootstrap Sharpe CI",
+        "ciGreaterThan0": "CI > 0",
+        "ciIncludes0": "CI includes 0",
+        "description": "Resampled daily returns {resamples} times to estimate {confidence}% confidence interval.",
+        "observedSharpe": "Observed Sharpe",
+        "medianSharpe": "Median Sharpe",
+        "probSharpePositive": "P(Sharpe > 0)"
+      },
+      "walkForward": {
+        "title": "Walk-Forward Analysis",
+        "profitableWindows": "{profitable}/{total} profitable",
+        "description": "Split into {windows} sequential windows to check performance consistency.",
+        "consistency": "Consistency",
+        "avgReturn": "Avg Return",
+        "avgSharpe": "Avg Sharpe",
+        "windows": "Windows",
+        "period": "Period",
+        "maxDd": "Max DD",
+        "winRate": "Win Rate"
+      }
+    },
+    "equity": {
+      "noEquityData": "No equity data",
+      "equity": "Equity",
+      "drawdown": "Drawdown%",
+      "maxDd": "Max DD",
+      "save": "Save",
+      "reset": "Reset"
+    },
+    "correlation": {
+      "noCorrelationData": "No correlation data",
+      "correlation": "Correlation",
+      "vs": "vs",
+      "r": "r"
+    },
+    "candlestick": {
+      "noPriceData": "No price data",
+      "kLine": "K",
+      "indicators": "Indicators",
+      "indicatorsCount": "Indicators ({count})",
+      "ma": "MA",
+      "channel": "Channel",
+      "bareK": "Bare K (clear all)",
+      "vol": "Vol",
+      "macd": "MACD",
+      "rsi": "RSI",
+      "kdj": "KDJ",
+      "open": "Open",
+      "high": "High",
+      "low": "Low",
+      "close": "Close",
+      "bollUpper": "BOLL+",
+      "bollMid": "BOLL",
+      "bollLower": "BOLL-",
+      "dif": "DIF",
+      "dea": "DEA",
+      "k": "%K",
+      "d": "%D",
+      "j": "%J",
+      "zoom": "Zoom",
+      "save": "Save",
+      "reset": "Reset"
+    }
+  },
+  "correlation": {
+    "title": "Correlation Matrix",
+    "description": "Upload CSV with date-based returns (date, ticker1, ticker2, ...) to compute correlations.",
+    "uploadCsv": "Upload CSV",
+    "selectFile": "Select file",
+    "orDragDrop": "or drag and drop",
+    "dropHere": "drop here",
+    "supportedFormats": "Supported formats: CSV",
+    "errorParsingCsv": "Error parsing CSV",
+    "errorInsufficientData": "Insufficient data: need at least 2 tickers with overlapping dates.",
+    "selectTicker": "Select ticker",
+    "heatmap": "Heatmap",
+    "noData": "No data loaded.",
+    "uploadCsvWithDateTickerColumns": "Upload a CSV with date and ticker columns to compute correlations."
+  },
+  "compare": {
+    "title": "Strategy Comparison",
+    "description": "Upload 2 or more strategy artifact directories (from `artifacts/`) to compare metrics.",
+    "uploadArtifacts": "Upload Artifacts",
+    "selectArtifactZips": "Select artifact zip files (from `artifacts/`)",
+    "dragDropHere": "or drag and drop here",
+    "supportedFormats": "Supported formats: Zip",
+    "uploading": "Uploading...",
+    "uploadFailed": "Upload failed:",
+    "noArtifactsSelected": "No artifacts selected",
+    "equityCurves": "Equity Curves",
+    "metricsTable": "Metrics Table",
+    "selectMetrics": "Select metrics to display",
+    "noArtifactsLoaded": "No artifacts loaded.",
+    "uploadAtLeastOne": "Upload at least one strategy artifact zip to compare."
+  },
+  "alphaZoo": {
+    "title": "Alpha Zoo",
+    "description": "Browse, detail, and benchmark views",
+    "browse": "Browse",
+    "bench": "Benchmark",
+    "detail": "Detail",
+    "zooCards": {
+      "qlib158": {
+        "title": "Qlib 158",
+        "description": "Microsoft Qlib full 158-feature library covering momentum, volatility, volume, and rolling stats signals."
+      },
+      "alpha101": {
+        "title": "Kakushadze 101 Formulated Alphas",
+        "description": "101 formulated alphas from Kakushadze (2015); short-term cross-sectional signals."
+      },
+      "gtja191": {
+        "title": "Guotai Junan 191",
+        "description": "Guotai Junan Securities 191 alphas; tech and microstructure signals tailored for China A-shares."
+      },
+      "academic": {
+        "title": "Academic Anomalies",
+        "description": "Curated long-term anomalies from academic literature (value, momentum, quality, low vol, etc.)."
+      }
+    },
+    "filters": {
+      "search": "Search",
+      "zoo": "Zoo",
+      "theme": "Theme",
+      "universe": "Universe",
+      "loadMore": "Load more"
+    },
+    "bench": {
+      "title": "Benchmark Runner",
+      "description": "Compute IC/IR for each alpha in selected Zoo, over selected universe and period, then categorize as alive/reversed/dead.",
+      "form": {
+        "zoo": "Zoo",
+        "universe": "Universe",
+        "period": "Period",
+        "top": "Top",
+        "runBenchmark": "Run Benchmark"
+      },
+      "progress": "Progress",
+      "result": "Result",
+      "categories": {
+        "alive": "Alive",
+        "reversed": "Reversed",
+        "dead": "Dead",
+        "skipped": "Skipped"
+      }
+    }
+  },
+  "toolProgress": {
+    "toolsRunning": "{count} tools running",
+    "step": "Step {index}",
+    "sLeft": "~{seconds}s left",
+    "more": "… +{count} more"
+  },
+  "common": {
+    "loading": "Loading…",
+    "newChat": "New Chat",
+    "rename": "Rename",
+    "delete": "Delete?",
+    "light": "Light",
+    "dark": "Dark",
+    "expand": "Expand",
+    "collapse": "Collapse"
+  }
+}

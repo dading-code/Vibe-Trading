@@ -1,4 +1,5 @@
 import { Suspense, lazy, type ComponentType } from "react";
+import { useTranslation } from "react-i18next";
 import { createBrowserRouter } from "react-router-dom";
 import { Layout } from "@/components/layout/Layout";
 
@@ -21,9 +22,10 @@ const AlphaZoo = lazy(() =>
 );
 
 function PageLoader() {
+  const { t } = useTranslation();
   return (
     <div className="flex h-[60vh] items-center justify-center text-muted-foreground">
-      Loading…
+      {t("common.loading")}
     </div>
   );
 }
@@ -48,7 +50,6 @@ export const router = createBrowserRouter([
       { path: "/correlation", element: wrap(Correlation) },
       { path: "/alpha-zoo", element: wrap(AlphaZoo) },
       { path: "/alpha-zoo/bench", element: wrap(AlphaZoo) },
-      { path: "/alpha-zoo/compare", element: wrap(AlphaZoo) },
       { path: "/alpha-zoo/:alphaId", element: wrap(AlphaZoo) },
     ],
   },

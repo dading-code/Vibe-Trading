@@ -1,6 +1,7 @@
 import { memo } from "react";
+import { useTranslation } from "react-i18next";
 import { cn } from "@/lib/utils";
-import { getMetricLabel, DISPLAY_ORDER, formatMetricVal, metricSentiment } from "@/lib/formatters";
+import { DISPLAY_ORDER, formatMetricVal, metricSentiment } from "@/lib/formatters";
 
 const SENTIMENT = {
   positive: "text-success",
@@ -14,6 +15,12 @@ interface Props {
 }
 
 export const MetricsCard = memo(function MetricsCard({ metrics, compact = false }: Props) {
+  const { t } = useTranslation();
+  
+  const getMetricLabel = (k: string): string => {
+    return t(`metrics.${k}`, k);
+  };
+
   const entries = DISPLAY_ORDER
     .filter((k) => metrics[k] != null)
     .map((k) => ({ k, v: metrics[k] }));

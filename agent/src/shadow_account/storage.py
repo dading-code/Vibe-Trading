@@ -20,7 +20,7 @@ from src.shadow_account.models import ShadowProfile, ShadowRule
 
 def _root() -> Path:
     """Return the Shadow Account root directory (auto-created)."""
-    root = Path.home() / ".vibe-trading"
+    root = Path(__file__).resolve().parents[3] / "data"
     root.mkdir(parents=True, exist_ok=True)
     return root
 

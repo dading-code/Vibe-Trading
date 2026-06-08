@@ -32,12 +32,12 @@ def default_hypotheses_path() -> Path:
 
     Returns:
         Env override path when ``VIBE_TRADING_HYPOTHESES_PATH`` is set,
-        otherwise ``~/.vibe-trading/hypotheses.json``.
+        otherwise project data directory's hypotheses.json.
     """
     override = os.environ.get(_ENV_PATH, "").strip()
     if override:
         return Path(override).expanduser()
-    return Path.home() / ".vibe-trading" / "hypotheses.json"
+    return Path(__file__).resolve().parents[3] / "data" / "hypotheses.json"
 
 
 def _utc_now() -> str:

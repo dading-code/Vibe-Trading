@@ -1,4 +1,5 @@
 import { useEffect, useRef } from "react";
+import { useTranslation } from "react-i18next";
 import { echarts } from "@/lib/echarts";
 import { getChartTheme } from "@/lib/chart-theme";
 
@@ -9,15 +10,15 @@ interface Props {
 }
 
 export function CorrelationMatrix({ labels, matrix, height = 500 }: Props) {
+  const { t } = useTranslation();
   const ref = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (!ref.current || labels.length === 0 || matrix.length === 0) return;
 
-    const t = getChartTheme();
+    const t_theme = getChartTheme();
     const chart = echarts.init(ref.current);
 
-    // Build heatmap data: [xIdx, yIdx, value]
     const data: [number, number, number][] = [];
     for (let i = 0; i < labels.length; i++) {
       for (let j = 0; j < labels.length; j++) {
@@ -33,13 +34,13 @@ export function CorrelationMatrix({ labels, matrix, height = 500 }: Props) {
       backgroundColor: "transparent",
       tooltip: {
         position: "top",
-        backgroundColor: t.tooltipBg,
-        borderColor: t.tooltipBorder,
-        textStyle: { color: t.tooltipText, fontSize: 12 },
+        backgroundColor: t_theme.tooltipBg,
+        borderColor: t_theme.tooltipBorder,
+        textStyle: { color: t_theme.tooltipText, fontSize: 12 },
         formatter: (params: unknown) => {
           const p = params as { data: [number, number, number] };
           const [x, y, v] = p.data;
-          return `<b>${labels[x]}</b> vs <b>${labels[y]}</b><br/>r = <b>${v.toFixed(4)}</b>`;
+          return `<b>${labels[x]}</b> ${t("charts.correlation.vs")} <b>${labels[y]}</b><br/>${t("charts.correlation.r")} = <b>${v.toFixed(4)}</b>`;
         },
       },
       grid: { left: "3%", right: "8%", top: "8%", bottom: "12%", containLabel: true },
@@ -47,19 +48,19 @@ export function CorrelationMatrix({ labels, matrix, height = 500 }: Props) {
         type: "category",
         data: labels,
         axisLabel: {
-          color: t.textColor,
+          color: t_theme.textColor,
           fontSize: 11,
           rotate: 30,
           interval: 0,
         },
-        axisLine: { lineStyle: { color: t.axisColor } },
+        axisLine: { lineStyle: { color: t_theme.axisColor } },
         splitArea: { show: false },
       },
       yAxis: {
         type: "category",
         data: labels,
-        axisLabel: { color: t.textColor, fontSize: 11, interval: 0 },
-        axisLine: { lineStyle: { color: t.axisColor } },
+        axisLabel: { color: t_theme.textColor, fontSize: 11, interval: 0 },
+        axisLine: { lineStyle: { color: t_theme.axisColor } },
         splitArea: { show: false },
       },
       visualMap: {
@@ -70,20 +71,20 @@ export function CorrelationMatrix({ labels, matrix, height = 500 }: Props) {
         orient: "vertical",
         right: 8,
         top: "center",
-        textStyle: { color: t.textColor, fontSize: 11 },
+        textStyle: { color: t_theme.textColor, fontSize: 11 },
         inRange: {
           color: ["#2166ac", "#4393c3", "#92c5de", "#d1e5f0", "#f7f7f7", "#fddbc7", "#f4a582", "#d6604d", "#b2182b"],
         },
       },
       series: [
         {
-          name: "Correlation",
+          name: t("charts.correlation.correlation"),
           type: "heatmap",
           data,
           label: {
             show: labels.length <= 8,
             fontSize: 10,
-            color: t.textColor,
+            color: t_theme.textColor,
             formatter: (params: unknown) => {
               const p = params as { value: [number, number, number] };
               return p.value[2].toFixed(2);
@@ -99,10 +100,10 @@ export function CorrelationMatrix({ labels, matrix, height = 500 }: Props) {
     const ro = new ResizeObserver(() => chart.resize());
     ro.observe(ref.current!);
     return () => { ro.disconnect(); chart.dispose(); };
-  }, [labels, matrix]);
+  }, [labels, matrix, t]);
 
   if (labels.length === 0) {
-    return <div className="text-muted-foreground text-sm p-4">No correlation data</div>;
+    return <div className="text-muted-foreground text-sm p-4">{t("charts.correlation.noCorrelationData")}</div>;
   }
   return <div ref={ref} style={{ height }} />;
 }

@@ -26,7 +26,7 @@ _FALLBACK_FAMILY = "DejaVu Sans"
 
 def fonts_dir() -> Path:
     """Return the Shadow Account fonts cache dir (auto-created)."""
-    d = Path.home() / ".vibe-trading" / "fonts"
+    d = Path(__file__).resolve().parents[3] / "data" / "fonts"
     d.mkdir(parents=True, exist_ok=True)
     return d
 

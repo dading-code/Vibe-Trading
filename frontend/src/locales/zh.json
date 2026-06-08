@@ -1,0 +1,651 @@
+{
+  "app": {
+    "name": "Vibe-Trading",
+    "version": "v0.1.9"
+  },
+  "nav": {
+    "home": "首页",
+    "agent": "智能体",
+    "alphaZoo": "Alpha 策略库",
+    "settings": "设置",
+    "correlation": "相关性矩阵"
+  },
+  "home": {
+    "title": "AI 驱动的量化策略研究",
+    "description": "用自然语言描述交易策略。智能体将生成代码、执行回测并优化——全程实时。",
+    "startResearch": "开始研究",
+    "features": {
+      "aiAgent": {
+        "title": "AI 智能体",
+        "desc": "自然语言策略生成，带有 ReAct 推理"
+      },
+      "builtInBacktest": {
+        "title": "内置回测",
+        "desc": "覆盖 A 股、美股/港股和加密货币的 7 个数据源"
+      },
+      "realTimeStreaming": {
+        "title": "实时流",
+        "desc": "观看智能体思考、调用工具并迭代"
+      },
+      "strategyReplay": {
+        "title": "策略回放",
+        "desc": "交易日志分析器 + 影子账户——提取你的规则，回测它们，归因盈亏差异"
+      }
+    }
+  },
+  "welcome": {
+    "subtitle": "与你的专业金融智能体团队一起交易",
+    "description": "描述一个交易策略以开始。",
+    "tryExample": "尝试一个示例：",
+    "capabilityChips": {
+      "financeSkillsLibrary": "金融技能库",
+      "swarmAgentTeams": "智能体集群团队",
+      "autoDiscoveredTools": "自动发现工具",
+      "3Markets": "3个市场：A股·加密货币·港股/美股",
+      "tradingConnectorProfiles": "交易连接配置",
+      "minuteToDailyTimeframes": "分钟级到日线级时间框架",
+      "4PortfolioOptimizers": "4种投资组合优化器",
+      "15RiskMetrics": "15+种风险指标",
+      "optionsAndDerivatives": "期权与衍生品",
+      "pdfAndWebResearch": "PDF和网页研究",
+      "factorAnalysisAndML": "因子分析与机器学习",
+      "tradeJournalAnalyzer": "交易日志分析器",
+      "shadowAccountBacktest": "影子账户回测",
+      "persistentMemory": "持久化记忆",
+      "sessionSearch": "会话搜索"
+    },
+    "categories": {
+      "multiMarketBacktest": {
+        "label": "多市场回测",
+        "examples": {
+          "crossMarketPortfolio": {
+            "title": "跨市场投资组合",
+            "desc": "A股 + 加密货币 + 美股，带风险平价优化器"
+          },
+          "btc5MinMacdStrategy": {
+            "title": "BTC 5分钟MACD策略",
+            "desc": "分钟级加密货币回测，使用实时OKX数据"
+          },
+          "usTechMaxDiversification": {
+            "title": "美股科技最大分散化",
+            "desc": "通过yfinance对FAANG+进行投资组合优化"
+          }
+        }
+      },
+      "researchAndAnalysis": {
+        "label": "研究与分析",
+        "examples": {
+          "multiFactorAlphaModel": {
+            "title": "多因子Alpha模型",
+            "desc": "在300只股票上进行IC加权因子合成"
+          },
+          "optionsGreeksAnalysis": {
+            "title": "期权希腊字母分析",
+            "desc": "Black-Scholes定价，包含Delta/Gamma/Theta/Vega"
+          }
+        }
+      },
+      "swarmTeams": {
+        "label": "集群团队",
+        "examples": {
+          "investmentCommitteeReview": {
+            "title": "投资委员会评审",
+            "desc": "多智能体辩论：做多vs做空，风险评审，PM决策"
+          },
+          "quantStrategyDesk": {
+            "title": "量化策略台",
+            "desc": "筛选→因子研究→回测→风险审计流程"
+          }
+        }
+      },
+      "documentAndWebResearch": {
+        "label": "文档与网页研究",
+        "examples": {
+          "analyzeEarningsReportPdf": {
+            "title": "分析财报PDF",
+            "desc": "上传PDF并询问财务相关问题"
+          },
+          "webResearchMacroOutlook": {
+            "title": "网页研究：宏观展望",
+            "desc": "读取实时网页来源进行宏观分析"
+          }
+        }
+      },
+      "tradeJournal": {
+        "label": "交易日志",
+        "examples": {
+          "analyzeMyBrokerExport": {
+            "title": "分析我的券商导出",
+            "desc": "解析同花顺/东财/富途/通用CSV——持仓天数、胜率、盈亏比、小时分布"
+          },
+          "diagnoseMyBehaviorBiases": {
+            "title": "诊断我的行为偏差",
+            "desc": "处置效应、过度交易、追涨、锚定——严重程度+数字证据"
+          }
+        }
+      },
+      "tradingConnectors": {
+        "label": "交易连接",
+        "examples": {
+          "checkSelectedConnector": {
+            "title": "检查选中的连接",
+            "desc": "列出连接配置并验证选中的那个"
+          },
+          "analyzeConnectorPortfolio": {
+            "title": "分析连接投资组合",
+            "desc": "从选中的连接读取账户摘要和持仓"
+          },
+          "quoteAndTrend": {
+            "title": "报价与趋势",
+            "desc": "通过选中的连接获取报价和最近的日线K线"
+          }
+        }
+      },
+      "shadowAccount": {
+        "label": "影子账户",
+        "examples": {
+          "trainMyShadowFromJournal": {
+            "title": "从日志训练我的影子",
+            "desc": "从券商CSV提取你的策略规则并保存影子配置"
+          },
+          "howMuchAmILeavingOnTable": {
+            "title": "我错过了多少收益？",
+            "desc": "回测你的影子策略并相对于实际盈亏进行差异归因"
+          },
+          "generateShadowReport": {
+            "title": "生成影子报告",
+            "desc": "8部分HTML/PDF——资金曲线、各市场夏普比率、归因瀑布图"
+          }
+        }
+      }
+    }
+  },
+  "layout": {
+    "sessions": "会话",
+    "newChat": "新建对话",
+    "noSessionsYet": "暂无会话",
+    "confirm": "确认",
+    "cancel": "取消",
+    "rename": "重命名",
+    "delete": "删除？",
+    "light": "浅色",
+    "dark": "深色",
+    "expand": "展开",
+    "collapse": "收起"
+  },
+  "settings": {
+    "title": "设置",
+    "description": "为这个本地项目配置模型凭证和市场数据源令牌。",
+    "localApiAccess": {
+      "title": "本地API访问",
+      "description": "对于远程或私有Web UI部署，在此浏览器中输入一次服务器API密钥。本地使用可以留空。",
+      "serverApiKey": "服务器API密钥",
+      "saveLocalKey": "保存本地密钥",
+      "storedOnlyInBrowser": "仅存储在此浏览器中。留空以清除它。"
+    },
+    "llmSettings": {
+      "title": "LLM设置",
+      "description": "选择智能体使用的模型并保存到项目本地的agent/.env文件中。",
+      "connection": "连接",
+      "provider": "提供商",
+      "changingProvidersUpdates": "更换提供商将更新推荐的模型和端点。",
+      "model": "模型",
+      "useProviderDefaults": "使用提供商默认值",
+      "useExactModelId": "使用你提供商要求的精确模型ID。",
+      "baseUrl": "基础URL",
+      "oAuth": "OAuth",
+      "apiKey": "API密钥",
+      "configured": "已配置",
+      "leaveBlankToKeepCurrentKey": "留空以保持当前密钥",
+      "thisProviderDoesNotRequireApiKey": "此提供商不需要API密钥。",
+      "clearSavedApiKey": "清除保存的API密钥",
+      "generation": "生成",
+      "temperature": "温度",
+      "timeoutSeconds": "超时秒数",
+      "maxRetries": "最大重试次数",
+      "reasoningEffort": "推理力度",
+      "off": "关闭",
+      "howHardModelThinks": "模型在回答前思考的程度。更高更彻底但更慢；保持关闭以获得最快回复。",
+      "savedTo": "保存到：",
+      "saveSettings": "保存设置",
+      "saving": "保存中..."
+    },
+    "dataSourceSettings": {
+      "title": "数据源设置",
+      "description": "配置回测和研究智能体使用的可选市场数据凭证。",
+      "tushareToken": "Tushare令牌",
+      "usedForChinaAshare": "用于中国A股、期货、基金和宏观数据。如果未设置，项目将在可用时回退到AKShare。",
+      "clearSavedTushareToken": "清除保存的Tushare令牌",
+      "saveDataSourceSettings": "保存数据源设置",
+      "baostock": "BaoStock",
+      "loaderAvailable": "加载器可用",
+      "noProjectLoader": "无项目加载器",
+      "pythonPackageInstalled": "Python包已安装",
+      "pythonPackageNotInstalled": "Python包未安装"
+    },
+    "loading": "加载中...",
+    "settingsAreUnavailable": "设置不可用",
+    "localApiKeySaved": "本地API密钥已保存",
+    "llmSettingsSaved": "LLM设置已保存",
+    "failedToLoadLlmSettings": "加载LLM设置失败",
+    "failedToLoadDataSourceSettings": "加载数据源设置失败",
+    "dataSourceSettingsSaved": "数据源设置已保存",
+    "failedToSaveLlmSettings": "保存LLM设置失败",
+    "failedToSaveDataSourceSettings": "保存数据源设置失败",
+    "unknownError": "未知错误"
+  },
+  "language": {
+    "switch": "切换语言",
+    "en": "English",
+    "zh": "中文"
+  },
+  "agent": {
+    "connectionLost": "连接断开，正在重新连接…",
+    "connectionRestored": "连接已恢复",
+    "failedToLoadGoal": "加载目标失败。",
+    "researchGoalAttached": "研究目标已附加",
+    "startWorkingOnThisResearchGoalNow": "现在开始处理这个研究目标。",
+    "keepItResearchOnly": "保持纯研究模式，当需要证据时使用可用工具，向目标分类账添加具体证据，并持续工作直到达成目标、被阻止、等待用户输入或预算受限。",
+    "continueTheActiveResearchGoal": "继续进行中的研究目标。",
+    "useRealAvailableTools": "根据需要使用实际可用的工具，向目标分类账添加证据，只有在目标完成、被阻止、等待用户输入或预算受限时才停止。",
+    "allCriteriaAppearCovered": "所有标准似乎都已覆盖；如果证明完成，请审计分类账并更新目标状态。",
+    "cancelRequestSent": "取消请求已发送",
+    "cancelFailed": "取消失败",
+    "failedToStartGoal": "启动目标失败。",
+    "executionTimedOut": "执行超时，已自动停止",
+    "connectorRuntimeHalted": "连接运行时已停止",
+    "connectorRuntimeHaltedRunnerStopped": "连接运行时已停止——执行器已停止，挂单已取消",
+    "connectorRuntimeResumed": "连接运行时已恢复",
+    "failedToHaltConnectorRuntime": "停止连接运行时失败。",
+    "researchGoalCancelled": "研究目标已取消",
+    "failedToCancelGoal": "取消目标失败。",
+    "researchGoalUpdated": "研究目标已更新",
+    "failedToUpdateGoal": "更新目标失败。",
+    "failedToContinueGoal": "继续目标失败，请重试。",
+    "failedToSendMessage": "发送消息失败，请重试。",
+    "executablesAndArchivesNotAllowed": "不允许可执行文件和归档文件",
+    "fileSizeExceedsLimit": "文件大小超过 50 MB 限制",
+    "uploaded": "已上传：",
+    "uploadFailed": "上传失败：",
+    "unknownError": "未知错误",
+    "agentIsWorking": "智能体正在工作…",
+    "newMessages": "新消息",
+    "running": "运行中",
+    "swarmTeamMode": "集群团队模式",
+    "useTheSwarmTool": "使用集群工具组建最佳专家团队处理此任务。自动选择最合适的预设。",
+    "newResearchGoal": "新建研究目标",
+    "goal": "目标",
+    "evidence": "证据",
+    "cancelEditGoal": "取消",
+    "saveGoalEdit": "保存",
+    "cancelGoal": "取消目标",
+    "startResearching": "开始研究",
+    "continueResearching": "继续研究",
+    "goalCancelledFromWebUi": "从Web UI取消。",
+    "attachResearchGoal": "附加研究目标",
+    "criteria": "标准",
+    "required": "必填",
+    "attachFile": "附加文件",
+    "swarmMode": "集群模式",
+    "uploading": "上传中…",
+    "exportChat": "导出聊天",
+    "exportChatTitle": "# 聊天导出",
+    "exportTime": "导出时间：",
+    "user": "用户",
+    "assistant": "助手",
+    "error": "错误",
+    "toolCall": "工具调用：",
+    "backtestComplete": "回测完成：",
+    "executionFailed": "执行失败",
+    "notConnected": "未连接",
+    "connectThisProfile": "连接此配置文件以启用连接器运行时",
+    "runVibeTradingConnectorAuthorize": "运行 `vibe-trading connector authorize",
+    "thisOpensTheBrokersOAuth": "这会打开券商自己的OAuth同意流程；Vibe-Trading从不持有资金，授权后仅转发您的意图。",
+    "theConnectorChannelStaysReadOnly": "在OAuth成功并提交委托之前，连接器通道保持只读状态。",
+    "connectorRuntime": "连接器运行时"
+  },
+  "common": {
+    "fromTheDeviceThatWillHoldTheBrokerSession": "从将持有券商会话的设备执行。",
+    "eGCreateADualMaCrossoverStrategy": "例如：为000001.SZ创建双均线交叉策略，回测2024年"
+  },
+  "runner": {
+    "authorized": "已授权",
+    "notConnected": "未连接",
+    "connectThisProfile": "连接此配置文件以启用连接器运行时",
+    "runVibeTradingConnectorList": "运行 `vibe-trading connector list`，选择券商配置文件，然后从将持有券商连接的桌面会话运行 `vibe-trading connector authorize <profile>`。",
+    "loadingConnectorAuthorizationInstructions": "正在加载连接器授权说明...",
+    "theConnectorChannelStaysReadOnly": "在OAuth成功并提交委托之前，连接器通道保持只读状态。",
+    "runner": "运行器",
+    "running": "运行中",
+    "stopped": "已停止",
+    "lastTick": "上次心跳",
+    "activeMandate": "活动委托",
+    "expiresIn": "将在",
+    "expired": "已过期",
+    "limitsUnavailable": "限制不可用",
+    "noActiveMandate": "没有活动委托。让智能体提出一个，然后在启动连接器运行时之前提交它。",
+    "haltedRunnerControlsDisabled": "已暂停——运行器控制已禁用",
+    "runtimeActiveInsideMandate": "在委托范围内运行时活动",
+    "idle": "空闲",
+    "stopRunner": "停止运行器",
+    "startRunner": "启动运行器",
+    "runnerStoppedFor": "已为以下对象停止运行器",
+    "runnerStartedFor": "已为以下对象启动运行器",
+    "runnerControlFailed": "运行器控制失败。",
+    "connectorRuntime": "连接器运行时",
+    "noConnectorConnected": "没有连接器连接"
+  },
+  "connectionBanner": {
+    "connectionLostReconnecting": "连接断开，正在重连（尝试第 {attempt} 次）…",
+    "connectionLost": "连接断开"
+  },
+  "messageBubble": {
+    "copied": "已复制",
+    "copy": "复制",
+    "executionTimedOutHint": "执行超时。尝试简化策略或减少资产数量。",
+    "apiFailedHint": "API 调用失败，请稍后重试。",
+    "executionFailedHint": "执行失败，点击重试。"
+  },
+  "runCompleteCard": {
+    "fullReport": "完整报告 →",
+    "pineScript": "Pine 脚本",
+    "shadowReport": "影子报告"
+  },
+  "pineScriptViewer": {
+    "pineScriptV6": "Pine Script v6",
+    "strategyPine": "strategy.pine",
+    "copied": "已复制",
+    "copy": "复制",
+    "docs": "文档",
+    "footerText": "TradingView Pine 编辑器 → 新建空白指标 → 粘贴代码 → 添加到图表"
+  },
+  "mandateProposalCard": {
+    "noLeverage": "无杠杆",
+    "leverageSuffix": "× 杠杆",
+    "adjust": "调整",
+    "universe": "交易范围",
+    "maxOrder": "最大订单",
+    "dailyCap": "每日上限",
+    "tradesPerDay": "笔/天",
+    "leverage": "杠杆",
+    "instruments": "交易品种",
+    "adjustPlaceholder": "例如：保留这个，但将每日上限提高到 10",
+    "cancel": "取消",
+    "sendAdjustment": "发送调整",
+    "committing": "提交中…",
+    "commitLabel": "提交 \"{label}\"",
+    "cannotCommitError": "无法提交委托：缺少连接器券商。请让智能体重新生成提案。",
+    "failedToCommit": "提交委托失败。",
+    "mandateActive": "委托 {ordinal}已激活",
+    "expiresOn": "过期于 {date}",
+    "reauthorizeConnector": "重新授权连接器委托",
+    "connectorRuntimeMandate": "连接器运行时委托",
+    "forMandateProposal": "对于委托提案 \"{label}\"（选项 {ordinal}）：{text}"
+  },
+  "thinkingTimeline": {
+    "processing": "处理中",
+    "running": "运行中",
+    "done": "已完成",
+    "steps": "步骤",
+    "runningTool": "正在运行 {tool}..."
+  },
+  "metrics": {
+    "total_return": "总回报",
+    "annual_return": "年化",
+    "sharpe": "夏普比",
+    "max_drawdown": "最大回撤",
+    "win_rate": "胜率",
+    "trade_count": "交易次数",
+    "final_value": "最终价值",
+    "calmar": "卡尔马比",
+    "sortino": "索提诺比",
+    "profit_loss_ratio": "盈亏比",
+    "max_consecutive_loss": "最大连续亏损",
+    "avg_holding_days": "平均持仓天数",
+    "benchmark_return": "基准",
+    "excess_return": "超额回报",
+    "information_ratio": "信息比"
+  },
+  "tools": {
+    "load_skill": "加载策略知识",
+    "write_file": "生成代码",
+    "edit_file": "编辑代码",
+    "read_file": "读取文件",
+    "run_backtest": "运行回测",
+    "bash": "运行命令",
+    "read_url": "读取网页",
+    "read_document": "读取文档",
+    "trading_connections": "列出交易连接器",
+    "trading_select_connection": "选择交易连接器",
+    "trading_check": "检查交易连接器",
+    "trading_account": "读取连接器账户",
+    "trading_positions": "读取连接器持仓",
+    "trading_orders": "读取连接器订单",
+    "trading_quote": "读取连接器报价",
+    "trading_history": "读取连接器历史",
+    "compact": "总结对话",
+    "create_task": "创建任务",
+    "update_task": "更新任务",
+    "spawn_subagent": "生成子智能体"
+  },
+  "runDetail": {
+    "chart": "图表",
+    "trades": "交易",
+    "validation": "验证",
+    "runCard": "运行卡片",
+    "code": "代码",
+    "runNotFound": "运行未找到",
+    "runNotFoundDesc": "运行目录可能已被移除，或者您的浏览器可能未配置 API 访问权限。如果远程访问，请检查设置中是否配置了 API 认证密钥。",
+    "goBack": "返回",
+    "downloadTradesCsv": "下载交易 CSV",
+    "downloadMetricsCsv": "下载指标 CSV",
+    "schema": "架构",
+    "generated": "生成时间",
+    "dataSources": "数据源",
+    "warnings": "警告",
+    "noneRecorded": "无记录",
+    "backtestSummary": "回测摘要",
+    "noBacktestSummary": "无回测摘要记录。",
+    "reproducibility": "可复现性",
+    "noReproducibilityHashes": "无可复现性哈希记录。",
+    "metrics": "指标",
+    "noScalarMetrics": "无标量指标记录。",
+    "validation": "验证",
+    "noValidationPayload": "无验证载荷记录。",
+    "artifactChecksums": "工件校验和",
+    "path": "路径",
+    "size": "大小",
+    "sha256": "SHA-256",
+    "noArtifactChecksums": "无工件校验和记录。",
+    "noChartData": "无图表数据可用",
+    "noChartDataDesc": "回测引擎可能未生成价格数据。请检查 artifacts/ 目录。",
+    "equityDrawdown": "资金曲线和回撤",
+    "noTrades": "无交易记录。",
+    "time": "时间",
+    "code": "代码",
+    "side": "方向",
+    "price": "价格",
+    "qty": "数量",
+    "reason": "原因",
+    "noCodeFiles": "无代码文件。"
+  },
+  "charts": {
+    "validation": {
+      "noValidationData": "无验证数据可用。",
+      "monteCarlo": {
+        "title": "蒙特卡洛置换检验",
+        "significant": "显著",
+        "notSignificant": "不显著",
+        "description": "打乱交易顺序 {simulations} 次，测试夏普比率是否优于随机。",
+        "actualSharpe": "实际夏普",
+        "pValueSharpe": "p值（夏普）",
+        "simulatedMean": "模拟均值",
+        "simulated90Range": "模拟90%范围",
+        "p5": "P5",
+        "actual": "实际",
+        "p95": "P95"
+      },
+      "bootstrap": {
+        "title": "Bootstrap 夏普比率置信区间",
+        "ciGreaterThan0": "CI > 0",
+        "ciIncludes0": "CI 包含 0",
+        "description": "重采样日收益率 {resamples} 次，估计 {confidence}% 置信区间。",
+        "observedSharpe": "观察夏普",
+        "medianSharpe": "中位数夏普",
+        "probSharpePositive": "P(夏普 > 0)"
+      },
+      "walkForward": {
+        "title": "滚动窗口分析",
+        "profitableWindows": "{profitable}/{total} 盈利",
+        "description": "分割为 {windows} 个连续窗口，检查绩效一致性。",
+        "consistency": "一致性",
+        "avgReturn": "平均回报",
+        "avgSharpe": "平均夏普",
+        "windows": "窗口",
+        "period": "周期",
+        "maxDd": "最大回撤",
+        "winRate": "胜率"
+      }
+    },
+    "equity": {
+      "noEquityData": "无资金曲线数据",
+      "equity": "资金曲线",
+      "drawdown": "回撤%",
+      "maxDd": "最大回撤",
+      "save": "保存",
+      "reset": "重置"
+    },
+    "correlation": {
+      "noCorrelationData": "无相关性数据",
+      "correlation": "相关性",
+      "vs": "vs",
+      "r": "r"
+    },
+    "candlestick": {
+      "noPriceData": "无价格数据",
+      "kLine": "K线",
+      "indicators": "指标",
+      "indicatorsCount": "指标 ({count})",
+      "ma": "均线",
+      "channel": "通道",
+      "bareK": "裸K（清除所有）",
+      "vol": "成交量",
+      "macd": "MACD",
+      "rsi": "RSI",
+      "kdj": "KDJ",
+      "open": "开盘",
+      "high": "最高",
+      "low": "最低",
+      "close": "收盘",
+      "bollUpper": "BOLL+",
+      "bollMid": "BOLL",
+      "bollLower": "BOLL-",
+      "dif": "DIF",
+      "dea": "DEA",
+      "k": "%K",
+      "d": "%D",
+      "j": "%J",
+      "zoom": "缩放",
+      "save": "保存",
+      "reset": "重置"
+    }
+  },
+  "correlation": {
+    "title": "相关性矩阵",
+    "description": "上传带有日期收益率的 CSV（日期、股票1、股票2、...）以计算相关性。",
+    "uploadCsv": "上传 CSV",
+    "selectFile": "选择文件",
+    "orDragDrop": "或拖放",
+    "dropHere": "拖放到这里",
+    "supportedFormats": "支持格式：CSV",
+    "errorParsingCsv": "解析 CSV 错误",
+    "errorInsufficientData": "数据不足：需要至少 2 个有重叠日期的股票。",
+    "selectTicker": "选择股票",
+    "heatmap": "热力图",
+    "noData": "未加载数据。",
+    "uploadCsvWithDateTickerColumns": "上传带有日期和股票列的 CSV 以计算相关性。"
+  },
+  "compare": {
+    "title": "策略比较",
+    "description": "上传 2 个或更多策略工件目录（来自 `artifacts/`）以比较指标。",
+    "uploadArtifacts": "上传工件",
+    "selectArtifactZips": "选择工件 zip 文件（来自 `artifacts/`）",
+    "dragDropHere": "或拖放到这里",
+    "supportedFormats": "支持格式：Zip",
+    "uploading": "上传中...",
+    "uploadFailed": "上传失败：",
+    "noArtifactsSelected": "未选择工件",
+    "equityCurves": "资金曲线",
+    "metricsTable": "指标表",
+    "selectMetrics": "选择要显示的指标",
+    "noArtifactsLoaded": "未加载工件。",
+    "uploadAtLeastOne": "上传至少一个策略工件 zip 进行比较。"
+  },
+  "alphaZoo": {
+    "title": "Alpha 策略库",
+    "description": "浏览、详情和基准测试视图",
+    "browse": "浏览",
+    "bench": "基准测试",
+    "detail": "详情",
+    "zooCards": {
+      "qlib158": {
+        "title": "Qlib 158",
+        "description": "微软 Qlib 完整 158 特征库，涵盖动量、波动率、成交量和滚动统计信号。"
+      },
+      "alpha101": {
+        "title": "Kakushadze 101 个公式化 Alpha",
+        "description": "来自 Kakushadze (2015) 的 101 个公式化 Alpha；短期横截面信号。"
+      },
+      "gtja191": {
+        "title": "国泰君安 191",
+        "description": "国泰君安证券的 191 个 Alpha；针对中国 A 股调整的技术和微观结构信号。"
+      },
+      "academic": {
+        "title": "学术异常",
+        "description": "来自学术文献的精选长期异常（价值、动量、质量、低波动等）。"
+      }
+    },
+    "filters": {
+      "search": "搜索",
+      "zoo": "策略库",
+      "theme": "主题",
+      "universe": "交易范围",
+      "loadMore": "加载更多"
+    },
+    "bench": {
+      "title": "基准测试运行器",
+      "description": "为所选策略库中的每个 Alpha 计算 IC/IR，在选定的交易范围和时间段内，然后将它们分类为有效/反转/无效。",
+      "form": {
+        "zoo": "策略库",
+        "universe": "交易范围",
+        "period": "时间段",
+        "top": "Top",
+        "runBenchmark": "运行基准测试"
+      },
+      "progress": "进度",
+      "result": "结果",
+      "categories": {
+        "alive": "有效",
+        "reversed": "反转",
+        "dead": "无效",
+        "skipped": "跳过"
+      }
+    }
+  },
+  "toolProgress": {
+    "toolsRunning": "{count} 个工具正在运行",
+    "step": "步骤 {index}",
+    "sLeft": "~{seconds} 秒剩余",
+    "more": "… +{count} 更多"
+  },
+  "common": {
+    "loading": "加载中…",
+    "newChat": "新建对话",
+    "rename": "重命名",
+    "delete": "删除？",
+    "light": "浅色",
+    "dark": "深色",
+    "expand": "展开",
+    "collapse": "收起"
+  }
+}
